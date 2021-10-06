@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:32:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/02 06:21:48 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/06 13:11:32 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ namespace ft {
 
 	template<class T>
 	struct	enable_if<true, T> { typedef T type; };
+
+	/* struct traits for class in containers */
 
 	/* iterators traits redefinition */
 
@@ -126,6 +128,17 @@ namespace ft {
 				return (false);
 		}
 		return (first1 == last1 && first2 != last2);
+	}
+
+	/* swap redefinition */
+
+	template<class T>
+	void	swap(T& a, T &b) {
+		T	tmp;
+
+		tmp = a;
+		a = b;
+		b = tmp;
 	}
 }
 

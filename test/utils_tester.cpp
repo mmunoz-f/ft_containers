@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 01:22:04 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/02 06:20:57 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/05 18:07:36 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,11 +120,32 @@ int	main(void) {
 
 	std::cout << "-- reverse_iterator --" << std::endl;
 	{
-		std::vector<int>	a;
-		for (int i = 0; i < 5; i++)
-			a.push_back(i);
+		Test num;
+		int i = 0;
+		int index = 1;
 
-		ft::reverse_iterator<int *>	r(a.end());
+		ft::reverse_iterator<int *> it = num.rbegin();
+		for ( ; it != num.rend() ; ++it, i++)
+			*it = i;
+
+		ft::reverse_iterator<int *> ite = num.rbegin();
+		std::cout << std::endl;
+		std::cout << "value at index " << index << ": ";
+		std::cout << ite[index] << std::endl;
+		std::cout << std::boolalpha;
+		std::cout << "it == ite -> " << (it == ite) << std::endl;
+		std::cout << "it != ite -> " << (it != ite) << std::endl;
+		std::cout << "decrementing it" << std::endl; it--;
+		std::cout << "it value: " << *it << std::endl;
+		std::cout << "it < ite -> " << (it < ite) << std::endl;
+		std::cout << "it > ite -> " << (it > ite) << std::endl;
+		std::cout << "it >= ite -> " << (it >= ite) << std::endl;
+		std::cout << "it <= ite -> " << (it <= ite) << std::endl;
+
+		ft::reverse_iterator<int *> dif1(&(num.num[2]));
+		ft::reverse_iterator<int *> dif2(&(num.num[4]));
+
+		std::cout << "Difference: " << (dif2 - dif1) << std::endl;
 	}
 	return (0);
 }

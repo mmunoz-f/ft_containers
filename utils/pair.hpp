@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 03:28:26 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/02 05:44:10 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/05 17:58:22 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,11 @@ namespace ft{
 		T1 first;
 		T2 second;
 
-		pair() {}
+		pair() : first(), second() {}
 		pair(const T1 &x, const T2 &y) : first(x), second(y) {}
-		pair(const pair<T1, T2> &p) : first(p.first), second(p.second) {}
+		template<class U1, class U2>
+		pair(const pair<U1, U2> &p) : first(p.first), second(p.second) {}
+		virtual	~pair () {}
 
 		pair	&operator=(const pair<T1, T2> &p) {
 			first(p.first);
@@ -52,7 +54,6 @@ namespace ft{
 	pair<T1, T2>	make_pair(T1 a, T2 b) {
 		return (pair<T1, T2>(a, b));
 	}
-
 }
 
 #endif

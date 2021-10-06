@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 02:53:37 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/02 05:20:39 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/05 17:55:36 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,16 @@
 class	Simple {
 	public:
 		int	n;
+};
+
+class Test
+{
+	public:
+
+		int num[200];
+
+		ft::reverse_iterator<int *> rbegin() { return ft::reverse_iterator<int *>(&num[200]); }
+		ft::reverse_iterator<int *> rend() { return ft::reverse_iterator<int *>(&num[0]); }
 };
 
 template<class T>
