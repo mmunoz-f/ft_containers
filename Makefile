@@ -6,7 +6,7 @@
 #    By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/30 18:50:48 by mmunoz-f          #+#    #+#              #
-#    Updated: 2021/10/07 16:16:17 by mmunoz-f         ###   ########.fr        #
+#    Updated: 2021/10/07 21:34:02 by mmunoz-f         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ clean:
 	rm -f $(OBJS) $(PRUEBA_OBJS) $(TEST_OBJS)
 
 fclean: clean
-	rm -f $(NAME) prueba tester vector_test
+	rm -f $(NAME) prueba tester vector_test ft_vector_test
 
 re: fclean all
 
