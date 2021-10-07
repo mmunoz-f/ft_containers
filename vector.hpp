@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/06 17:07:37 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/07 21:32:25 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define __VECTOR_H__
 
 # include <memory>
+# include <stdexcept>
 # include "utils/utils.hpp"
 # include "utils/pair.hpp"
 # include "utils/reverse_iterator.hpp"
@@ -140,32 +141,30 @@ namespace ft {
 			typedef typename Allocator::pointer			pointer;
 			typedef typename Allocator::const_pointer	const_pointer;
 
-			typedef ft::vector_iterator<T>				iterator;
-			typedef ft::vector_iterator<const T>		const_iterator;
-			typedef ft::reverse_iterator<T>				reverse_iterator;
-			typedef ft::reverse_iterator<const T>		const_reverse_iterator;
+			typedef ft::vector_iterator<pointer>		iterator;
+			typedef ft::vector_iterator<const_pointer>	const_iterator;
+			typedef ft::reverse_iterator<pointer>		reverse_iterator;
+			typedef ft::reverse_iterator<const_pointer>	const_reverse_iterator;
 
 			/* CONSTRUCTORS */
 
 			vector() : _begin(), _end(), _end_cap() {}
 			explicit	vector(const Allocator &alloc) : _begin(), _end(), _end_cap(NULL, alloc) {}
-			explicit	vector(size_type count, const T & value = T(), const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
-				_begin = alloc.allocate(count);
-				_end = _end_cap.first = _begin + count;
-				for (pointer i = _begin; i != _end; i++)
-					_end_cap.second.construct(i, value);
+			explicit	vector(size_type count, const T &value = T(), const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
+				_begin = _end = _end_cap.second.allocate(count);
+				_end_cap.first = _begin + count;
+				insert(begin(), count, value);
 			}
 			template<class InputIt>
-			vector(InputIt first, InputIt last, const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
-				_begin = alloc.allocate(first - last);
-				_end = _end_cap.first = _begin + (first - last);
-				for (pointer i = _begin; first != last; first++, last++)
-					_end_cap.second.construct(i, *first);
+			vector(typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last, const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
+				_begin = _end = _end_cap.second.allocate(last - first);
+				_end_cap.first = _begin + (last - first);
+				insert(begin(), first, last);
 			}
 			vector(const vector &other) : _end_cap(NULL, other.get_allocator()) {
-				_begin = _end_cap.second.allocate(other.size());
-				_end = _end_cap = _begin + other.size();
-				insert(begin(), other.begin(), other.end());
+				_begin = _end =_end_cap.second.allocate(other.size());
+				_end_cap.first = _begin + other.size();
+				insert(begin(), other.cbegin(), other.cend());
 			}
 			/* --------- */
 
@@ -176,31 +175,35 @@ namespace ft {
 					return (*this);
 				clear();
 				_end_cap.second = other.get_allocator();
-				insert(begin(), other.begin(), other.end());
+				insert(begin(), other.cbegin(), other.cend());
 				return (*this);
 			}
 			/* --------- */
 
 			void	assign(size_type count, const T &value) {
-				for (size_type i = 0; i < count; i++)
+				for (size_type i = 0; i < count; i++) {
+					_end_cap.second.destroy(_begin[i]);
 					_end_cap.second.construct(_begin[i], value);
+				}
 			}
 			template<class InputIt>
 			void	assign(InputIt first, InputIt last) {
-				for (size_type i = 0; first != last; first++, i++)
+				for (size_type i = 0; first != last; first++, i++) {
+					_end_cap.second.destroy(_begin[i]);
 					_end_cap.second.construct(_begin[i], *first);
+				}
 			}
 
 			allocator_type	get_allocator() const { return (_end_cap.second); }
 
 			reference		at(size_type pos) {
-				if !(pos < size())
-					throw std::out_of_range();
+				if (!(pos < size()))
+					throw std::out_of_range(NULL);
 				return (_begin[pos]);
 			}
 			const_reference	at(size_type pos) const {
-				if !(pos < size())
-					throw std::out_of_range();
+				if (!(pos < size()))
+					throw std::out_of_range(NULL);
 				return (_begin[pos]);
 			}
 
@@ -232,21 +235,20 @@ namespace ft {
 			/* CAPACITY METHODS */
 
 			bool	empty() const { return (_begin == _end); }
-			size_type	size() const { return (_begin - _end); }
+			size_type	size() const { return (_end - _begin); }
 			size_type	max_size() const { return (_end_cap.second.max_size()); }
 
 			void	reserve(size_type new_cap) {
 				if (new_cap < capacity())
 					return ;
 				if (new_cap > max_size())
-					throw	std::length_error();
-				vector	tmp(new_cap, ,_end_cap.second);
-				for (iterator i = begin(); i != end(); i++)
-					tmp.push_back(*i);
+					throw	std::length_error(NULL);
+				vector	tmp(new_cap, T(), _end_cap.second);
+				tmp.insert(tmp.begin(), this->begin(), this->end());
 				*this = tmp;
 			}
 
-			size_type	capacity() const { return (_begin - _end_cap.first); }
+			size_type	capacity() const { return (_end_cap.first - _begin); }
 			/* --------- */
 
 			/* MODIFIER METHODS */
@@ -254,19 +256,13 @@ namespace ft {
 			void	clear() { erase(begin(), end()); }
 
 			iterator	insert(iterator pos, const T &value) {
-				T	tmp = *pos;
 
-				if (size() == capacity())
-					resize(capacity() ? capacity() * 2 : 1);
-				_end_cap.second.construct(pos.base(), value);
-				for (; pos != end(); ++pos)
-					ft::swap(*pos, tmp);
-				*end() = tmp;
-				_end++;
 			}
 			void		insert(iterator pos, size_type count, const T &value) {
+				if (size() + count < capacity())
+					resize(capacity() ? (size() + count) * 2 : count);
 				for (size_type i = 0; i < count; i++, pos++)
-					insert(pos, value)
+					insert(pos, value);
 			}
 			template<class InputIt>
 			void		insert(iterator pos, InputIt first, InputIt last) {
@@ -275,25 +271,23 @@ namespace ft {
 			}
 
 			iterator	erase(iterator pos) {
-				_end_cap.second.destroy(pos.base());
-				for (; pos != end(); pos++)
-					*pos = *(pos + 1);
-				_end--;
+
 			}
 			iterator	erase(iterator first, iterator last) {
 				for (; first != last; first++)
 					erase(first);
+				return (last);
 			}
 
 			void	push_back(const T &value) { insert(end(), value); }
 			void	pop_back() { erase(end()); }
 
 			void	resize(size_type count, T value = T()) {
-				if (count <= size())
-					insert(_end, count - size(), value);
+				if (count > size())
+					insert(end(), count - size(), value);
 				else
 					for (; size() - count;)
-						erase(end() - 1), ;
+						erase(end() - 1);
 			}
 
 			void	swap(vector &other) {
