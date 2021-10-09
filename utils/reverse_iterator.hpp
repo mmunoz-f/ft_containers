@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 03:30:55 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/05 19:28:26 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/09 20:15:12 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,8 @@ namespace ft {
 
 	template<class T>
 	reverse_iterator<T>	operator+(typename reverse_iterator<T>::difference_type n, const reverse_iterator<T> &Iter) { return (reverse_iterator<T>(Iter.base() - n)); }
-	template<class T>
-	typename reverse_iterator<T>::difference_type	operator-(const reverse_iterator<T> &Iter1, const reverse_iterator<T> &Iter2) { return (Iter1.base() - Iter2.base()); }
+	template<class T, class U>
+	typename reverse_iterator<T>::difference_type	operator-(const reverse_iterator<T> &Iter1, const reverse_iterator<U> &Iter2) { return (Iter1.base() - Iter2.base()); }
 
 }
 

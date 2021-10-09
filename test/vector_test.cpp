@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 16:22:36 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/07 20:33:20 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/09 18:11:21 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@ int	main(void) {
 		std::vector<int>	a;
 		std::cout << "Empty constructor called" << std::endl;
 		std::cout << "size: " << a.size() << ", capacity: " << a.capacity() << ", max_size: " << a.max_size() << std::endl;
+		for (std::vector<int>::iterator i = a.begin(); i != a.end(); i++)
+			std::cout << *i << ", ";
+		a.push_back(10);
+		a.push_back(5);
+		for (std::vector<int>::iterator i = a.begin(); i != a.end(); i++)
+			std::cout << *i << ", ";
+		std::cout <<std::endl;
+		a.pop_back();
 		for (std::vector<int>::iterator i = a.begin(); i != a.end(); i++)
 			std::cout << *i << ", ";
 		std::cout << std::endl;

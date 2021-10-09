@@ -6,12 +6,14 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:32:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/07 15:12:49 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/09 20:22:29 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __CONTAINERS_UTILS_H__
 # define __CONTAINERS_UTILS_H__
+
+# include <iterator>
 
 namespace ft {
 

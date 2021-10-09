@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 16:22:36 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/07 20:43:02 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/09 19:07:42 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,15 @@ int	main(void) {
 		for (ft::vector<int>::iterator i = a.begin(); i != a.end(); i++)
 			std::cout << *i << ", ";
 		a.push_back(10);
+		a.push_back(5);
+		for (ft::vector<int>::iterator i = a.begin(); i != a.end(); i++)
+			std::cout << *i << ", ";
+		std::cout <<std::endl;
+		a.pop_back();
 		for (ft::vector<int>::iterator i = a.begin(); i != a.end(); i++)
 			std::cout << *i << ", ";
 		std::cout << std::endl;
 	}
-	/*
 	{
 		std::allocator<int>	alloc;
 		ft::vector<int>		a(alloc);
@@ -56,15 +60,6 @@ int	main(void) {
 	}
 	{
 		ft::vector<int>	tmp(5, 3);
-		ft::vector<int>	a(tmp);
-		std::cout << "Copy constructor called" <<std::endl;
-		std::cout << "size: " << a.size() << ", capacity: " << a.capacity() << ", max_size: " << a.max_size() << std::endl;
-		for (ft::vector<int>::iterator i = a.begin(); i != a.end(); i++)
-			std::cout << *i << ", ";
-		std::cout << std::endl;
-	}
-	{
-		ft::vector<int>	tmp(5, 3);
 		ft::vector<int>	a(tmp.begin(), tmp.end());
 		std::cout << "Range constructor called" <<std::endl;
 		std::cout << "size: " << a.size() << ", capacity: " << a.capacity() << ", max_size: " << a.max_size() << std::endl;
@@ -72,5 +67,13 @@ int	main(void) {
 			std::cout << a[i] << ", ";
 		std::cout << std::endl;
 	}
-	*/
+	{
+		ft::vector<int>	tmp(5, 3);
+		ft::vector<int>	a(tmp);
+		std::cout << "Copy constructor called" <<std::endl;
+		std::cout << "size: " << a.size() << ", capacity: " << a.capacity() << ", max_size: " << a.max_size() << std::endl;
+		for (ft::vector<int>::iterator i = a.begin(); i != a.end(); i++)
+			std::cout << *i << ", ";
+		std::cout << std::endl;
+	}
 }

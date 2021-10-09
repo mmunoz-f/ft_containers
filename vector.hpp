@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/07 21:32:25 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/09 20:31:02 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ namespace ft {
 			T	_current;
 
 		public:
-			typedef typename ft::iterator_traits<T>::iterator_category	iterator_categoty;
+			typedef typename ft::iterator_traits<T>::iterator_category	iterator_category;
 			typedef typename ft::iterator_traits<T>::value_type			value_type;
 			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
 			typedef typename ft::iterator_traits<T>::pointer			pointer;
@@ -119,9 +119,8 @@ namespace ft {
 
 	template<class T>
 	vector_iterator<T>	operator+(typename vector_iterator<T>::difference_type n, const vector_iterator<T> &Iter) { return (Iter + n); }
-	template<class T>
-	typename vector_iterator<T>::difference_type	operator-(const vector_iterator<T> &Iter1, const vector_iterator<T> &Iter2) { return (Iter1.base() - Iter2.base()); }
-
+	template<class T, class U>
+	typename vector_iterator<T>::difference_type	operator-(const vector_iterator<T> &Iter1, const vector_iterator<U> &Iter2) { return (Iter1.base() - Iter2.base()); }
 
 
 	/* vector container redefinition */
@@ -131,24 +130,24 @@ namespace ft {
 
 		public:
 
-			typedef T									value_type;
-			typedef Allocator							allocator_type;
-			typedef std::size_t							size_type;
-			typedef ptrdiff_t							difference_type;
+			typedef T										value_type;
+			typedef Allocator								allocator_type;
+			typedef std::size_t								size_type;
+			typedef ptrdiff_t								difference_type;
 
-			typedef typename Allocator::reference		reference;
-			typedef typename Allocator::const_reference	const_reference;
-			typedef typename Allocator::pointer			pointer;
-			typedef typename Allocator::const_pointer	const_pointer;
+			typedef typename Allocator::reference			reference;
+			typedef typename Allocator::const_reference		const_reference;
+			typedef typename Allocator::pointer				pointer;
+			typedef typename Allocator::const_pointer		const_pointer;
 
-			typedef ft::vector_iterator<pointer>		iterator;
-			typedef ft::vector_iterator<const_pointer>	const_iterator;
-			typedef ft::reverse_iterator<pointer>		reverse_iterator;
-			typedef ft::reverse_iterator<const_pointer>	const_reverse_iterator;
+			typedef ft::vector_iterator<pointer>			iterator;
+			typedef ft::vector_iterator<const_pointer>		const_iterator;
+			typedef ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 			/* CONSTRUCTORS */
 
-			vector() : _begin(), _end(), _end_cap() {}
+			vector() : _begin(), _end(), _end_cap(NULL, std::allocator<T>()) {}
 			explicit	vector(const Allocator &alloc) : _begin(), _end(), _end_cap(NULL, alloc) {}
 			explicit	vector(size_type count, const T &value = T(), const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
 				_begin = _end = _end_cap.second.allocate(count);
@@ -157,14 +156,14 @@ namespace ft {
 			}
 			template<class InputIt>
 			vector(typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last, const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
-				_begin = _end = _end_cap.second.allocate(last - first);
-				_end_cap.first = _begin + (last - first);
+				_begin = _end = _end_cap.second.allocate(std::distance(first, last));
+				_end_cap.first = _begin + (std::distance(first, last));
 				insert(begin(), first, last);
 			}
 			vector(const vector &other) : _end_cap(NULL, other.get_allocator()) {
-				_begin = _end =_end_cap.second.allocate(other.size());
-				_end_cap.first = _begin + other.size();
-				insert(begin(), other.cbegin(), other.cend());
+				_begin = _end =_end_cap.second.allocate(other.capacity());
+				_end_cap.first = _begin + other.capacity();
+				insert(begin(), other.begin(), other.end());
 			}
 			/* --------- */
 
@@ -175,22 +174,24 @@ namespace ft {
 					return (*this);
 				clear();
 				_end_cap.second = other.get_allocator();
-				insert(begin(), other.cbegin(), other.cend());
+				_begin = _end = _end_cap.second.allocate(other.capacity());
+				_end_cap.first = _begin + other.capacity();
+				insert(begin(), other.begin(), other.end());
 				return (*this);
 			}
 			/* --------- */
 
 			void	assign(size_type count, const T &value) {
 				for (size_type i = 0; i < count; i++) {
-					_end_cap.second.destroy(_begin[i]);
-					_end_cap.second.construct(_begin[i], value);
+					_end_cap.second.destroy(_begin + i);
+					_end_cap.second.construct(_begin + i, value);
 				}
 			}
 			template<class InputIt>
-			void	assign(InputIt first, InputIt last) {
+			void	assign(typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last) {
 				for (size_type i = 0; first != last; first++, i++) {
-					_end_cap.second.destroy(_begin[i]);
-					_end_cap.second.construct(_begin[i], *first);
+					_end_cap.second.destroy(_begin + i);
+					_end_cap.second.construct(_begin + i, *first);
 				}
 			}
 
@@ -222,14 +223,14 @@ namespace ft {
 			/* ITERATORS */
 
 			iterator				begin() { return (iterator(_begin)); }
-			const_iterator			cbegin() const { return (const_iterator(_begin)); }
+			const_iterator			begin() const { return (const_iterator(_begin)); }
 			iterator				end() { return (iterator(_end)); }
-			const_iterator			cend() const { return (const_iterator(_end)); }
+			const_iterator			end() const { return (const_iterator(_end)); }
 
 			reverse_iterator		rbegin() { return (reverse_iterator(_end)); }
-			const_reverse_iterator	crbegin() const { return (const_reverse_iterator(_end)); }
+			const_reverse_iterator	rbegin() const { return (const_reverse_iterator(_end)); }
 			reverse_iterator		rend() { return (reverse_iterator(_begin)); }
-			const_reverse_iterator	crend() const { return (const_reverse_iterator(_begin)); }
+			const_reverse_iterator	rend() const { return (const_reverse_iterator(_begin)); }
 			/* --------- */
 
 			/* CAPACITY METHODS */
@@ -244,6 +245,7 @@ namespace ft {
 				if (new_cap > max_size())
 					throw	std::length_error(NULL);
 				vector	tmp(new_cap, T(), _end_cap.second);
+				tmp.clear();
 				tmp.insert(tmp.begin(), this->begin(), this->end());
 				*this = tmp;
 			}
@@ -256,22 +258,43 @@ namespace ft {
 			void	clear() { erase(begin(), end()); }
 
 			iterator	insert(iterator pos, const T &value) {
-
+				if (size() == capacity()) {
+					difference_type	pos_val = pos.base() - _begin;
+					reserve((size() + 1) * 2);
+					pos = begin() + pos_val;
+				}
+				if (pos != end()) {
+					T	tmp = *pos;
+					for (iterator next = pos + 1; next < end(); next++) {
+						ft::swap(*(next), tmp);
+						tmp = *(next);
+					}
+				}
+				_end++;
+				_end_cap.second.construct(pos.base(), value);
+				return (pos);
 			}
 			void		insert(iterator pos, size_type count, const T &value) {
 				if (size() + count < capacity())
-					resize(capacity() ? (size() + count) * 2 : count);
+					reserve((size() + count) * 2);
 				for (size_type i = 0; i < count; i++, pos++)
 					insert(pos, value);
 			}
 			template<class InputIt>
-			void		insert(iterator pos, InputIt first, InputIt last) {
+			void		insert(iterator pos, typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last) {
+				if (size() + (last - first) < capacity())
+					reserve((size() + (last - first)) * 2);
 				for (; first != last; first++, pos++)
 					insert(pos, *first);
 			}
 
 			iterator	erase(iterator pos) {
-
+				if (pos != end())
+					_end_cap.second.destroy(pos.base());
+				for (iterator next = pos; next + 1 < end(); next++)
+					ft::swap(*next, *(next + 1));
+				_end--;
+				return (pos);
 			}
 			iterator	erase(iterator first, iterator last) {
 				for (; first != last; first++)
