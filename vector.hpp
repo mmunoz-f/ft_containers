@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/09 20:31:02 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/11 20:40:20 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,8 @@ namespace ft {
 
 			/* ACCESS OPERATORS */
 
-			reference	operator*() const {
-				reference	tmp(*(this->base()));
-				return (tmp);
-			}
-			pointer		operator->() const {
-				pointer	tmp(this->base());
-				return (tmp);
-			}
+			reference	operator*() const { return *(_current); }
+			pointer		operator->() const { return &(operator*()); }
 
 			reference	operator[](difference_type n) const { return (_current[n]); }
 			/* --------- */
@@ -125,7 +119,7 @@ namespace ft {
 
 	/* vector container redefinition */
 
-	template<class T , class Allocator = std::allocator<T> >
+	template<class T, class Allocator = std::allocator<T> >
 	class	vector {
 
 		public:
@@ -156,8 +150,8 @@ namespace ft {
 			}
 			template<class InputIt>
 			vector(typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last, const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
-				_begin = _end = _end_cap.second.allocate(std::distance(first, last));
-				_end_cap.first = _begin + (std::distance(first, last));
+				_begin = _end = _end_cap.second.allocate(ft::distance(first, last));
+				_end_cap.first = _begin + (ft::distance(first, last));
 				insert(begin(), first, last);
 			}
 			vector(const vector &other) : _end_cap(NULL, other.get_allocator()) {
@@ -182,29 +176,25 @@ namespace ft {
 			/* --------- */
 
 			void	assign(size_type count, const T &value) {
-				for (size_type i = 0; i < count; i++) {
-					_end_cap.second.destroy(_begin + i);
-					_end_cap.second.construct(_begin + i, value);
-				}
+				clear();
+				insert(begin(), count, value);
 			}
 			template<class InputIt>
 			void	assign(typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last) {
-				for (size_type i = 0; first != last; first++, i++) {
-					_end_cap.second.destroy(_begin + i);
-					_end_cap.second.construct(_begin + i, *first);
-				}
+				clear();
+				insert(begin(), first, last);
 			}
 
 			allocator_type	get_allocator() const { return (_end_cap.second); }
 
 			reference		at(size_type pos) {
-				if (!(pos < size()))
-					throw std::out_of_range(NULL);
+				if (pos < 0 || (pos >= size()))
+					throw std::out_of_range("");
 				return (_begin[pos]);
 			}
 			const_reference	at(size_type pos) const {
-				if (!(pos < size()))
-					throw std::out_of_range(NULL);
+				if (pos < 0 || (pos >= size()))
+					throw std::out_of_range("");
 				return (_begin[pos]);
 			}
 
@@ -227,10 +217,10 @@ namespace ft {
 			iterator				end() { return (iterator(_end)); }
 			const_iterator			end() const { return (const_iterator(_end)); }
 
-			reverse_iterator		rbegin() { return (reverse_iterator(_end)); }
-			const_reverse_iterator	rbegin() const { return (const_reverse_iterator(_end)); }
-			reverse_iterator		rend() { return (reverse_iterator(_begin)); }
-			const_reverse_iterator	rend() const { return (const_reverse_iterator(_begin)); }
+			reverse_iterator		rbegin() { return (reverse_iterator(end())); }
+			const_reverse_iterator	rbegin() const { return (const_reverse_iterator(end())); }
+			reverse_iterator		rend() { return (reverse_iterator(begin())); }
+			const_reverse_iterator	rend() const { return (const_reverse_iterator(begin())); }
 			/* --------- */
 
 			/* CAPACITY METHODS */
@@ -243,7 +233,7 @@ namespace ft {
 				if (new_cap < capacity())
 					return ;
 				if (new_cap > max_size())
-					throw	std::length_error(NULL);
+					throw	std::length_error("");
 				vector	tmp(new_cap, T(), _end_cap.second);
 				tmp.clear();
 				tmp.insert(tmp.begin(), this->begin(), this->end());
@@ -263,29 +253,20 @@ namespace ft {
 					reserve((size() + 1) * 2);
 					pos = begin() + pos_val;
 				}
-				if (pos != end()) {
-					T	tmp = *pos;
-					for (iterator next = pos + 1; next < end(); next++) {
-						ft::swap(*(next), tmp);
-						tmp = *(next);
-					}
-				}
 				_end++;
+				for (iterator next = pos + 1; next < end(); next++)
+					ft::swap(*next, *pos);
 				_end_cap.second.construct(pos.base(), value);
 				return (pos);
 			}
 			void		insert(iterator pos, size_type count, const T &value) {
-				if (size() + count < capacity())
-					reserve((size() + count) * 2);
 				for (size_type i = 0; i < count; i++, pos++)
-					insert(pos, value);
+					pos = insert(pos, value);
 			}
 			template<class InputIt>
 			void		insert(iterator pos, typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last) {
-				if (size() + (last - first) < capacity())
-					reserve((size() + (last - first)) * 2);
 				for (; first != last; first++, pos++)
-					insert(pos, *first);
+					pos = insert(pos, *first);
 			}
 
 			iterator	erase(iterator pos) {
@@ -297,9 +278,9 @@ namespace ft {
 				return (pos);
 			}
 			iterator	erase(iterator first, iterator last) {
-				for (; first != last; first++)
-					erase(first);
-				return (last);
+				for (; first != last; last--)
+					first = erase(first);
+				return (first);
 			}
 
 			void	push_back(const T &value) { insert(end(), value); }
@@ -314,16 +295,9 @@ namespace ft {
 			}
 
 			void	swap(vector &other) {
-				pointer	tmp;
-
-				tmp =  _begin;
-				_begin = other.begin().base();
-				other.begin() = tmp;
-				tmp = _end;
-				_end = other.end().base();
-				other.end() = tmp;
-				tmp = _end_cap.first;
-				_end_cap.first = _begin + other.capacity();/////???????
+				ft::swap(_begin, other._begin);
+				ft::swap(_end, other._end);
+				ft::swap(_end_cap, other._end_cap);
 			}
 			/* --------- */
 
@@ -334,6 +308,37 @@ namespace ft {
 			ft::pair<pointer, Allocator>	_end_cap;
 	};
 
+	/* RELATIONAL OPERATORS */
+
+	template< class T, class Alloc >
+	bool	operator==(const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs) {
+		typename vector<T, Alloc>::const_iterator first1 = lhs.begin();
+		typename vector<T, Alloc>::const_iterator first2 = rhs.begin();
+		for (; *first1 == *first2 && first1 != lhs.end() && first2 != rhs.end(); first1++, first2++);
+		return (first1 == lhs.end() && first2 == rhs.end());
+	}
+	template< class T, class Alloc >
+	bool operator!=(const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs) { return (!(lhs == rhs)); }
+	template< class T, class Alloc >
+	bool operator<(const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs) {
+		typename vector<T, Alloc>::const_iterator first1 = lhs.begin();
+		typename vector<T, Alloc>::const_iterator first2 = rhs.begin();
+		for (; first1 != lhs.end() && first2 != rhs.end(); first1++, first2++)
+			if (*first1 != *first2)
+				return (*first1 < *first2);
+		return (first1 == lhs.end() && first2 != rhs.end());
+	}
+	template< class T, class Alloc >
+	bool	operator<=(const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs) { return !(rhs < lhs); }
+	template< class T, class Alloc >
+	bool	operator>( const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs) { return (rhs < lhs); };
+	template< class T, class Alloc >
+	bool	operator>=(const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs) { return !(lhs < rhs); }
+
+	template< class T, class Alloc >
+	void	swap(vector<T,Alloc> &lhs, vector<T,Alloc> &rhs) {
+		lhs.swap(rhs);
+	}
 }
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 03:28:26 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/05 17:58:22 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/11 14:25:29 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ namespace ft{
 		virtual	~pair () {}
 
 		pair	&operator=(const pair<T1, T2> &p) {
-			first(p.first);
-			second(p.second);
+			first = p.first;
+			second = p.second;
 			return (*this);
 		}
 	};

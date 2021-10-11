@@ -6,14 +6,12 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:32:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/09 20:22:29 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/11 20:39:15 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __CONTAINERS_UTILS_H__
 # define __CONTAINERS_UTILS_H__
-
-# include <iterator>
 
 namespace ft {
 
@@ -141,6 +139,14 @@ namespace ft {
 		tmp = a;
 		a = b;
 		b = tmp;
+	}
+
+	/* distance redefinition */
+	template<class InputIt>
+	typename iterator_traits<InputIt>::difference_type	distance(InputIt first, InputIt last) {
+		typename iterator_traits<InputIt>::difference_type	ret = 0;
+		for (;first != last; first++, ret++);
+		return (ret);
 	}
 }
 
