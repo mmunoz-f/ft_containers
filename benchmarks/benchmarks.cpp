@@ -95,9 +95,9 @@ void benchmark_vector()
 	std::vector<int> sv1;
 	ft::vector<int> v1;
 
-	std = v_insert_growing(2000, sv1);
+	std = v_insert_growing(20000, sv1);
 	std::cout << "Std: " << std << std::endl;
-	ft = v_insert_growing(2000, v1);
+	ft = v_insert_growing(20000, v1);
 	std::cout << "Ft: " << ft << std::endl;
 
 	std::cout << "Our vector is " << (double)ft / (double)std << " times slower. ";

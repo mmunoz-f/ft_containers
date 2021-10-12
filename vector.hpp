@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/11 20:40:20 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/12 16:57:02 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,10 +163,19 @@ namespace ft {
 
 			/* ASSING OPERATOR */
 
+			~vector() {
+				clear();
+				_end_cap.second.deallocate(_begin, capacity());
+			}
+			/* --------- */
+
+
+			/* ASSING OPERATOR */
+
 			vector	&operator=(const vector &other) {
 				if (this == &other)
 					return (*this);
-				clear();
+				_end_cap.second.deallocate(_begin, capacity());
 				_end_cap.second = other.get_allocator();
 				_begin = _end = _end_cap.second.allocate(other.capacity());
 				_end_cap.first = _begin + other.capacity();
@@ -234,10 +243,11 @@ namespace ft {
 					return ;
 				if (new_cap > max_size())
 					throw	std::length_error("");
-				vector	tmp(new_cap, T(), _end_cap.second);
-				tmp.clear();
-				tmp.insert(tmp.begin(), this->begin(), this->end());
-				*this = tmp;
+				vector	tmp(_end_cap.second);
+				swap(tmp);
+				_begin = _end = _end_cap.second.allocate(new_cap);
+				_end_cap.first = _begin + new_cap;
+				insert(begin(), tmp.begin(), tmp.end());
 			}
 
 			size_type	capacity() const { return (_end_cap.first - _begin); }
@@ -248,14 +258,14 @@ namespace ft {
 			void	clear() { erase(begin(), end()); }
 
 			iterator	insert(iterator pos, const T &value) {
-				if (size() == capacity()) {
+				if (_end == _end_cap.first) {
 					difference_type	pos_val = pos.base() - _begin;
 					reserve((size() + 1) * 2);
 					pos = begin() + pos_val;
 				}
+				for (iterator next = end(); next > pos; next--)
+					_end_cap.second.construct(next.base(), *(next - 1));
 				_end++;
-				for (iterator next = pos + 1; next < end(); next++)
-					ft::swap(*next, *pos);
 				_end_cap.second.construct(pos.base(), value);
 				return (pos);
 			}
@@ -273,7 +283,7 @@ namespace ft {
 				if (pos != end())
 					_end_cap.second.destroy(pos.base());
 				for (iterator next = pos; next + 1 < end(); next++)
-					ft::swap(*next, *(next + 1));
+					_end_cap.second.construct(next.base(), *(next + 1));
 				_end--;
 				return (pos);
 			}
