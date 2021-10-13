@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/12 16:57:02 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/13 16:17:29 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,6 @@ namespace ft {
 			/* ASSING OPERATOR */
 
 			~vector() {
-				clear();
 				_end_cap.second.deallocate(_begin, capacity());
 			}
 			/* --------- */
@@ -243,11 +242,12 @@ namespace ft {
 					return ;
 				if (new_cap > max_size())
 					throw	std::length_error("");
-				vector	tmp(_end_cap.second);
-				swap(tmp);
+				iterator	old_begin = begin();
+				iterator	old_end = end();
 				_begin = _end = _end_cap.second.allocate(new_cap);
 				_end_cap.first = _begin + new_cap;
-				insert(begin(), tmp.begin(), tmp.end());
+				insert(begin(), old_begin, old_end);
+				_end_cap.second.deallocate(old_begin.base(), ft::distance(old_begin, old_end));
 			}
 
 			size_type	capacity() const { return (_end_cap.first - _begin); }
@@ -264,9 +264,9 @@ namespace ft {
 					pos = begin() + pos_val;
 				}
 				for (iterator next = end(); next > pos; next--)
-					_end_cap.second.construct(next.base(), *(next - 1));
+					*next = *(next - 1);
 				_end++;
-				_end_cap.second.construct(pos.base(), value);
+				*pos = value;
 				return (pos);
 			}
 			void		insert(iterator pos, size_type count, const T &value) {
@@ -283,14 +283,14 @@ namespace ft {
 				if (pos != end())
 					_end_cap.second.destroy(pos.base());
 				for (iterator next = pos; next + 1 < end(); next++)
-					_end_cap.second.construct(next.base(), *(next + 1));
+					*next = *(next + 1);
 				_end--;
 				return (pos);
 			}
 			iterator	erase(iterator first, iterator last) {
 				for (; first != last; last--)
-					first = erase(first);
-				return (first);
+					erase(last - 1);
+				return (last);
 			}
 
 			void	push_back(const T &value) { insert(end(), value); }

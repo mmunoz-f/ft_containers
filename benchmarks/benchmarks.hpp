@@ -78,20 +78,20 @@ std::clock_t v_insert_growing(size_t times, VectorType vector)
 	Timer t;
 	t.start();
 
-	int tmp = 0;
+//	int tmp = 0;
 
 	for (size_t i = 0; i < times; i++)
 	{
 		vector.push_back(i); // insert a constantly growing range of integers
-		tmp = vector[i];
+//		tmp = vector[i];
 	}
 
 	{
 
-		VectorType newVector(vector); // copy and destruction
+//		VectorType newVector(vector); // copy and destruction
 	}
 
-	vector.erase(vector.begin(), vector.end()); // erase
+//	vector.erase(vector.begin(), vector.end()); // erase
 
 	return t.stop();
 }
