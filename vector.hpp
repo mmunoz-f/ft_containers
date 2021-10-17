@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/17 04:15:48 by miguel           ###   ########.fr       */
+/*   Updated: 2021/10/17 16:51:40 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,9 +264,9 @@ namespace ft {
 					pos = begin() + pos_val;
 				}
 				for (iterator next = end(); next > pos; next--)
-					*next = *(next - 1);
+					_end_cap.second.construct(next.base(), *(next - 1));
 				_end++;
-				*pos = value;
+				_end_cap.second.construct(pos.base(), value);
 				return (pos);
 			}
 			void		insert(iterator pos, size_type count, const T &value) {
@@ -283,7 +283,7 @@ namespace ft {
 				if (pos != end())
 					_end_cap.second.destroy(pos.base());
 				for (iterator next = pos; next + 1 < end(); next++)
-					*next = *(next + 1);
+					_end_cap.second.construct(next.base(), *(next + 1));
 				_end--;
 				return (pos);
 			}
