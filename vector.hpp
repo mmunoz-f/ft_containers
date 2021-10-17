@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/13 16:17:29 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/17 04:15:48 by miguel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ namespace ft {
 			}
 			/* --------- */
 
-			/* ASSING OPERATOR */
+			/* DESTRUCTOR */
 
 			~vector() {
 				_end_cap.second.deallocate(_begin, capacity());
