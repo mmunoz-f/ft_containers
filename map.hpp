@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/18 18:21:58 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:07:54 by miguel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ namespace ft {
 			typedef typename Allocator::pointer				pointer;
 			typedef typename Allocator::const_pointer		const_pointer;
 
-			typedef ft::tree_iterator<pointer>					iterator;
-			typedef ft::tree_iterator<const_pointer>				const_iterator;
+			typedef ft::tree_iterator<pointer>				iterator;
+			typedef ft::tree_iterator<const_pointer>		const_iterator;
 			typedef ft::reverse_iterator<iterator>			reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
@@ -83,7 +83,7 @@ namespace ft {
 
 			/* ACCESS OPERATOR */
 
-			T	&operator[](const Key &key) {}
+			reference	operator[](const Key &key) {}
 			/* --------- */
 
 			/* ITERATORS */

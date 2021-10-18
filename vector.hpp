@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/17 16:51:40 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/18 20:33:53 by miguel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ namespace ft {
 			/* ACCESS OPERATORS */
 
 			reference	operator*() const { return *(_current); }
-			pointer		operator->() const { return &(operator*()); }
+			pointer		operator->() const { return &(*_current); }
 
-			reference	operator[](difference_type n) const { return (_current[n]); }
+			reference	operator[](difference_type n) const { return *(_current + n); }
 			/* --------- */
 
 			/* ADVANCES AND DECREMENTS OPERATORS */

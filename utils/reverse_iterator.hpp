@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   reverse_iterator.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
+/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 03:30:55 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/11 20:04:01 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/18 20:30:10 by miguel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ namespace ft {
 			T	_current;
 
 		public:
-			typedef typename ft::iterator_traits<T>::iterator_category	iterator_categoty;
+			typedef typename ft::iterator_traits<T>::iterator_category	iterator_category;
 			typedef typename ft::iterator_traits<T>::value_type			value_type;
 			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
 			typedef typename ft::iterator_traits<T>::pointer			pointer;
@@ -51,10 +51,10 @@ namespace ft {
 
 			/* ACCESS OPERATORS */
 
-			reference	operator*() const { return *(_current - 1); }
-			pointer		operator->() const { return &(operator*()); }
+			reference	operator*() const { return *(--_current); }
+			pointer		operator->() const { return &(*_current); }
 
-			reference	operator[](difference_type n) const { return (_current[-n - 1]); }
+			reference	operator[](difference_type n) const { return (*this + n); }
 			/* --------- */
 
 			/* ADVANCES AND DECREMENTS OPERATORS */
@@ -79,8 +79,8 @@ namespace ft {
 				return (tmp);
 			}
 
-			reverse_iterator	operator+(difference_type n) const { return (reverse_iterator(base() - n)); }
-			reverse_iterator	operator-(difference_type n) const { return (reverse_iterator(base() + n)); }
+			reverse_iterator	operator+(difference_type n) const { return (reverse_iterator(*this + n)); }
+			reverse_iterator	operator-(difference_type n) const { return (reverse_iterator(*this - n)); }
 
 			template<class U>
 			reverse_iterator	&operator+=(U n) { return (*this = *this + n); }
