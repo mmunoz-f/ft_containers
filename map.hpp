@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/17 18:51:10 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/18 18:21:58 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,6 @@
 # include "utils/red_black_tree.hpp"
 
 namespace ft {
-
-	template<class T>
-	class	map_iterator {
-
-	};
 
 	template<class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class	map {
@@ -43,8 +38,8 @@ namespace ft {
 			typedef typename Allocator::pointer				pointer;
 			typedef typename Allocator::const_pointer		const_pointer;
 
-			typedef map_iterator<pointer>					iterator;
-			typedef map_iterator<const_pointer>				const_iterator;
+			typedef ft::tree_iterator<pointer>					iterator;
+			typedef ft::tree_iterator<const_pointer>				const_iterator;
 			typedef ft::reverse_iterator<iterator>			reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
@@ -63,8 +58,52 @@ namespace ft {
 
 			/* CONSTRUCTORS */
 
-			map() : value_compare(Compare()), _tree(value_compare, Allocator()) {}
-			explicit	map(const Compare &comp, const Allocator &alloc = Allocator()) :  {}
+			map() : _tree(value_compare(Compare()), Allocator()) {}
+			explicit	map(const Compare &comp, const Allocator &alloc = Allocator()) : _tree(value_compare(comp), alloc) {}
+
+			template<class InputIt>
+			map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator &alloc = Allocator()) : _tree(InputIt first, InputIt last, value_compare(comp, alloc)) {}
+			map(const map &other) : _tree(other._tree) {}
+			/* --------- */
+
+			/* DESTRUCTOR */
+
+			~map() {}
+			/* --------- */
+
+			/* ASSIGN OPERATOR */
+
+			map	&operator=(const map &other) {
+				if (this == &other)
+					return (*this);
+			}
+			/* --------- */
+
+			allocator_type	get_allocator() const { return (_tree.get_allocator()); }
+
+			/* ACCESS OPERATOR */
+
+			T	&operator[](const Key &key) {}
+			/* --------- */
+
+			/* ITERATORS */
+
+			iterator				begin() {}
+			const_iterator			begin() {}
+
+			iterator				end() {}
+			const_iterator			end() {}
+
+			reverse_iterator		rbegin() {}
+			const_reverse_iterator	rbegin() {}
+
+			reverse_iterator		rend() {}
+			const_reverse_iterator	rend() {}
+			/* --------- */
+
+			/* CAPACITY */
+
+			bool	empty() const { return (_tree.empty()); }
 			/* --------- */
 
 		private:

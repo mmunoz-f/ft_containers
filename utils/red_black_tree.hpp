@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/17 18:40:01 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/18 18:12:31 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,15 @@
 
 namespace ft {
 
+	template<class T>
+	class	tree_iterator {
+
+	};
+
 	template<class T, class Compare, class Allocator>
 	class	tree {
 
 		public:
-
 			typedef T									value_type;
 
 			typedef Allocator							allocator_type;
@@ -37,12 +41,33 @@ namespace ft {
 
 			/* CONSTRUCTORS */
 
-			tree() : _root(NULL) {}
+			tree(const Compare &comp, const Allocator &alloc) : _comp(comp), _alloc(alloc), _root(NULL) {}
+			template<class InputIt>
+			tree(InputIt first, InputIt last, const Compare &comp, const Allocator &alloc) : _comp(comp), _alloc(alloc),  _root(NULL) {}
+			tree(const tree &other) {
+
+			}
 			/* --------- */
 
+			/* DESTRUCTOR */
+
+			~tree() {}
+			/* --------- */
+
+			/* ASSIGN OPERATOR */
+
+			tree	&operator=(const tree &other) {
+				if (this == &other)
+					return (*this);
+			}
+			/* --------- */
+
+			allocator_type	get_allocator() const { return (_alloc); }
 
 		private:
-			node	*_root;
+			Compare			_comp;
+			allocator_type	_alloc;
+			node			*_root;
 	};
 }
 
