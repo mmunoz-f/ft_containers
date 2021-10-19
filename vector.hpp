@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/18 20:33:53 by miguel           ###   ########.fr       */
+/*   Updated: 2021/10/19 18:04:59 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __VECTOR_H__
 # define __VECTOR_H__
 
+# include <map>
 # include <memory>
 # include <stdexcept>
 # include "utils/utils.hpp"
