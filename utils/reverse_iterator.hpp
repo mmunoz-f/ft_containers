@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   reverse_iterator.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 03:30:55 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/18 20:30:10 by miguel           ###   ########.fr       */
+/*   Updated: 2021/10/20 17:11:47 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,10 @@ namespace ft {
 
 			/* ACCESS OPERATORS */
 
-			reference	operator*() const { return *(--_current); }
-			pointer		operator->() const { return &(*_current); }
+			reference	operator*() const { return *(_current - 1); }
+			pointer		operator->() const { return &(*(*this)); }
 
-			reference	operator[](difference_type n) const { return (*this + n); }
+			reference	operator[](difference_type n) const { return *(*this + n); }
 			/* --------- */
 
 			/* ADVANCES AND DECREMENTS OPERATORS */
@@ -79,8 +79,8 @@ namespace ft {
 				return (tmp);
 			}
 
-			reverse_iterator	operator+(difference_type n) const { return (reverse_iterator(*this + n)); }
-			reverse_iterator	operator-(difference_type n) const { return (reverse_iterator(*this - n)); }
+			reverse_iterator	operator+(difference_type n) const { return (reverse_iterator(_current - n)); }
+			reverse_iterator	operator-(difference_type n) const { return (reverse_iterator(_current + n)); }
 
 			template<class U>
 			reverse_iterator	&operator+=(U n) { return (*this = *this + n); }
