@@ -6,13 +6,14 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/19 23:00:16 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/10/23 12:58:30 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __RED_BLACK_TREE_H__
 # define __RED_BLACK_TREE_H__
 
+# include <memory>
 # include "utils.hpp"
 
 # define M_BLACK	0
@@ -61,7 +62,7 @@ namespace ft {
 			/* --------- */
 	};
 
-	template<class T, class Compare>
+	template<class T, class Compare, class Allocator>
 	class	tree {
 
 		typedef struct node {
@@ -88,19 +89,19 @@ namespace ft {
 		} node;
 
 		public:
-			typedef T										value_type;
+			typedef T													value_type;
 
-			typedef std::allocator<node>					Allocator;
-			typedef typename Allocator::reference			reference;
-			typedef typename Allocator::const_reference		const_reference;
-			typedef typename Allocator::pointer				pointer;
-			typedef typename Allocator::const_pointer		const_pointer;
+			typedef typename Allocator::template	rebind<node>::other	Tree_allocator; //?
+			typedef typename Tree_allocator::reference					reference;
+			typedef typename Tree_allocator::const_reference			const_reference;
+			typedef typename Tree_allocator::pointer					pointer;
+			typedef typename Tree_allocator::const_pointer				const_pointer;
 
 			/* CONSTRUCTORS */
 
-			tree(const Compare &comp, const Allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill) {}
+			tree(const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill) {}
 			template<class InputIt>
-			tree(InputIt first, InputIt last, const Compare &comp, const Allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill) {}
+			tree(InputIt first, InputIt last, const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill) {}
 			tree(const tree &other) : _comp(other._comp), _alloc(other._alloc), _nill(_alloc.allocate(1)), _root(_nill) {
 
 			}
@@ -122,7 +123,7 @@ namespace ft {
 			}
 			/* --------- */
 
-			allocator_type	get_allocator() const { return (_alloc); }
+			Tree_allocator_type	get_Tree_allocator() const { return (_alloc); }
 
 			/* INSERT */
 
@@ -148,7 +149,7 @@ namespace ft {
 			/* --------- */
 		private:
 			Compare			_comp;
-			Allocator		_alloc;
+			Tree_allocator	_alloc;
 			node			*_nill;
 			node			*_root;
 	};
