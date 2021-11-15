@@ -6,12 +6,14 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 03:30:55 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/20 17:11:47 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/15 20:58:30 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __REVERSE_ITERATOR_H__
 # define __REVERSE_ITERATOR_H__
+
+# include "utils.hpp"
 
 namespace ft {
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miguel <miguel@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/18 19:07:54 by miguel           ###   ########.fr       */
+/*   Updated: 2021/11/15 21:14:45 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,52 +59,56 @@ namespace ft {
 			/* CONSTRUCTORS */
 
 			map() : _tree(value_compare(Compare()), Allocator()) {}
-			explicit	map(const Compare &comp, const Allocator &alloc = Allocator()) : _tree(value_compare(comp), alloc) {}
+			// explicit	map(const Compare &comp, const Allocator &alloc = Allocator()) : _tree(value_compare(comp), alloc) {}
 
-			template<class InputIt>
-			map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator &alloc = Allocator()) : _tree(InputIt first, InputIt last, value_compare(comp, alloc)) {}
-			map(const map &other) : _tree(other._tree) {}
+			// template<class InputIt>
+			// map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator &alloc = Allocator()) : _tree(InputIt first, InputIt last, value_compare(comp, alloc)) {}
+			// map(const map &other) : _tree(other._tree) {}
 			/* --------- */
 
 			/* DESTRUCTOR */
 
-			~map() {}
+			// ~map() {}
 			/* --------- */
 
 			/* ASSIGN OPERATOR */
 
-			map	&operator=(const map &other) {
-				if (this == &other)
-					return (*this);
-			}
+			// map	&operator=(const map &other) {
+			// 	if (this == &other)
+			// 		return (*this);
+			// }
 			/* --------- */
 
-			allocator_type	get_allocator() const { return (_tree.get_allocator()); }
+			// allocator_type	get_allocator() const { return (_tree.get_allocator()); }
 
 			/* ACCESS OPERATOR */
 
-			reference	operator[](const Key &key) {}
+			// reference	operator[](const Key &key) {}
 			/* --------- */
 
 			/* ITERATORS */
 
-			iterator				begin() {}
-			const_iterator			begin() {}
+			// iterator				begin() {}
+			// const_iterator			begin() {}
 
-			iterator				end() {}
-			const_iterator			end() {}
+			// iterator				end() {}
+			// const_iterator			end() {}
 
-			reverse_iterator		rbegin() {}
-			const_reverse_iterator	rbegin() {}
+			// reverse_iterator		rbegin() {}
+			// const_reverse_iterator	rbegin() {}
 
-			reverse_iterator		rend() {}
-			const_reverse_iterator	rend() {}
+			// reverse_iterator		rend() {}
+			// const_reverse_iterator	rend() {}
 			/* --------- */
 
 			/* CAPACITY */
 
 			bool	empty() const { return (_tree.empty()); }
 			/* --------- */
+
+			void	insert(const value_type &value) { _tree.insert(value); }
+
+			void	print() const { _tree.print(); }
 
 		private:
 			ft::tree<value_type, value_compare, allocator_type>	_tree;
