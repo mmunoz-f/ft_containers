@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/15 20:45:24 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/16 16:49:40 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ namespace ft {
 				insert(begin(), count, value);
 			}
 			template<class InputIt>
-			vector(typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last, const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
+			vector(typename ft::enable_if<!ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last, const Allocator &alloc = Allocator()) : _end_cap(NULL, alloc) {
 				_begin = _end = _end_cap.second.allocate(ft::distance(first, last));
 				_end_cap.first = _begin + (ft::distance(first, last));
 				insert(begin(), first, last);

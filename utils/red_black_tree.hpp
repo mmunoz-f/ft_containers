@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/15 21:11:07 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/16 21:07:31 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,44 +62,38 @@ namespace ft {
 			/* --------- */
 	};
 
-	template<class T, class Compare, class Allocator>
-	class	tree {
-
-		typedef struct	node {
-			T			content;
-			node		*parent;
-			node		*left;
-			node		*right;
+	template<class T>
+	class	node {
+		public:
+			T		content;
+			node	*parent;
+			node	*left;
+			node	*right;
 			bool		color;
 
-			node(const T value, const node *nill) : content(value), parent(nill), left(nill), right(nill) {}
-
-			node	&operator=(const node &other) {
-				if (this == &other)
-					return (*this);
-				color = other.color;
-				content = other.content;
-				parent = other.parent;
-				left = other.left;
-				right = other.right;
-			}
+			node() : color(M_RED) {}
+			node(const T value,  node *nill) : content(value), parent(nill), left(nill), right(nill) {}
+			node(const  node &other) : content(other.content), parent(other.parent), left(other.left), right(other.right), color(other.color) {}
 
 			node	*getGrandParent() {
 				return (parent->parent);
 			}
 
-			T&		operator*() { return (*content); }
-			T*		operator->() { return (content); }
-		}	node;
+			T&		operator*() { return (content); }
+			T*		operator->() { return (&content); }
+	};
 
+	template<class T, class Compare, class Allocator>
+	class	tree {
 		public:
-			typedef T															value_type;
+			typedef T														value_type;
 
-			typedef typename Allocator::template	rebind<struct node>::other	Tree_allocator;
-			typedef typename Tree_allocator::reference							reference;
-			typedef typename Tree_allocator::const_reference					const_reference;
-			typedef typename Tree_allocator::pointer							pointer;
-			typedef typename Tree_allocator::const_pointer						const_pointer;
+			typedef node<T>												node;
+			typedef typename Allocator::template rebind<node>::other	Tree_allocator;
+			typedef typename Tree_allocator::reference					reference;
+			typedef typename Tree_allocator::const_reference			const_reference;
+			typedef typename Tree_allocator::pointer					pointer;
+			typedef typename Tree_allocator::const_pointer				const_pointer;
 
 		private:
 			void	leftRotate(node *x) {
@@ -147,7 +141,8 @@ namespace ft {
 			}
 
 			void	fixInsert(node *newNode) {
-				while (newNode->parent->color == M_RED) {
+				while (newNode->parent->color != M_RED) {
+					std::cout << "hola" << std::endl;
 					if (newNode->getGrandParent()->left == newNode->parent) { // Case 1
 						if (newNode->getGrandParent()->right->color == M_RED) {
 							newNode->getGrandParent()->right = M_BLACK;
@@ -161,8 +156,8 @@ namespace ft {
 						}
 						else { // Case 3
 							newNode->parent->color = M_BLACK;
-							newNode->getGrandParent()->colot = M_RED;
-							rightRoatate(newNode->getGrandParent());
+							newNode->getGrandParent()->color = M_RED;
+							rightRotate(newNode->getGrandParent());
 						}
 					}
 					else {
@@ -229,21 +224,24 @@ namespace ft {
 
 			void	insert(const value_type &content) {
 				node	*newNode = _alloc.allocate(1);
-				*newNode = node(content, _nill);
+				_alloc.construct(newNode, node(content, _nill));
 				if (empty()) {
 					newNode->color = M_BLACK;
-					return (_root = newNode);
+					_root = newNode;
+					return ;
 				}
 				node	*i = _root;
+				node	*p;
 				for (; i != _nill;) {
-					if (_comp(*i, newNode))
+					p = i;
+					if (_comp(*(*i), *(*newNode)))
 						i = i->right;
 					else
 						i = i->left;
 				}
 				newNode->parent = i->parent;
 				newNode->color = M_RED;
-				_comp(*(i->parent), newNode) ? *(i->parent.right) = newNode : *(i->parent.left) = newNode;
+				_comp(*(*p), *(*newNode)) ? p->right = newNode : p->left = newNode;
 				fixInsert(newNode);
 			}
 			/* --------- */

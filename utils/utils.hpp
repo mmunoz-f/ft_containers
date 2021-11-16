@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:32:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/15 20:53:17 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/16 17:16:20 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,12 @@ namespace ft {
 		for (;first != last; first++, ret++);
 		return (ret);
 	}
+
+	/* is_const redefinition */
+	template<class T>
+	struct is_const { static const bool				value = false; };
+	template<class T>
+	struct is_const<const T> { static const bool	value = true; };
 }
 
 #endif

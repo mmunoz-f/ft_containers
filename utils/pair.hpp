@@ -6,12 +6,16 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 03:28:26 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/11 14:25:29 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/16 20:06:27 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __PAIR_H__
 # define __PAIR_H__
+
+# include "utils.hpp"
+
+#include <utility>
 
 namespace ft{
 
@@ -19,16 +23,19 @@ namespace ft{
 
 	template<class T1, class T2>
 	struct	pair {
-		T1 first;
-		T2 second;
+		typedef T1	first_type;
+		typedef T2	second_type;
+
+		first_type first;
+		second_type second;
 
 		pair() : first(), second() {}
-		pair(const T1 &x, const T2 &y) : first(x), second(y) {}
+		pair(const first_type &x, const second_type &y) : first(x), second(y) {}
 		template<class U1, class U2>
 		pair(const pair<U1, U2> &p) : first(p.first), second(p.second) {}
 		virtual	~pair () {}
 
-		pair	&operator=(const pair<T1, T2> &p) {
+		pair	&operator=(const pair &p) {
 			first = p.first;
 			second = p.second;
 			return (*this);
@@ -51,7 +58,7 @@ namespace ft{
 	bool operator>=(const pair<T1,T2> &a, const pair<T1,T2> &b) { return !(a < b); }
 
 	template<class T1, class T2>
-	pair<T1, T2>	make_pair(T1 a, T2 b) {
+	pair<T1, T2>	make_pair(const T1 &a, const T2 &b) {
 		return (pair<T1, T2>(a, b));
 	}
 }
