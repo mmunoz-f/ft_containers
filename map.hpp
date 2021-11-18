@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/18 07:30:12 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/18 15:13:25 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,6 @@ namespace ft {
 			typedef typename Allocator::pointer				pointer;
 			typedef typename Allocator::const_pointer		const_pointer;
 
-			typedef ft::tree_iterator<pointer>				iterator;
-			typedef ft::tree_iterator<const_pointer>		const_iterator;
-			typedef ft::reverse_iterator<iterator>			reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
-
 			class	value_compare {
 				protected:
 					key_compare	comp;
@@ -55,6 +50,12 @@ namespace ft {
 
 					bool	operator()(const value_type &lhs, const value_type &rhs) const { return (comp(lhs.first, rhs.first)); }
 			};
+
+			typedef ft::tree<value_type, value_compare, Allocator>	Tree;
+			typedef typename Tree::iterator							iterator;
+			typedef typename Tree::const_iterator					const_iterator;
+			typedef typename Tree::reverse_iterator					reverse_iterator;
+			typedef typename Tree::const_reverse_iterator			const_reverse_iterator;
 
 			/* CONSTRUCTORS */
 
@@ -81,24 +82,24 @@ namespace ft {
 
 			// allocator_type	get_allocator() const { return (_tree.get_allocator()); }
 
-			/* ACCESS OPERATOR */
+			/* ELEMENT ACCESS */
 
 			// reference	operator[](const Key &key) {}
 			/* --------- */
 
 			/* ITERATORS */
 
-			// iterator				begin() {}
-			// const_iterator			begin() {}
+			iterator				begin() { return (_tree.begin()); }
+			const_iterator			begin() { return (_tree.begin()); }
 
-			// iterator				end() {}
-			// const_iterator			end() {}
+			iterator				end() { return (_tree.end()); }
+			const_iterator			end() { return (_tree.end()); }
 
-			// reverse_iterator		rbegin() {}
-			// const_reverse_iterator	rbegin() {}
+			reverse_iterator		rbegin() { return (_tree.rbegin()); }
+			const_reverse_iterator	rbegin() { return (_tree.rbegin()); }
 
-			// reverse_iterator		rend() {}
-			// const_reverse_iterator	rend() {}
+			reverse_iterator		rend() { return (_tree.rend()); }
+			const_reverse_iterator	rend() { return (_tree.rend()) }
 			/* --------- */
 
 			/* CAPACITY */
@@ -112,17 +113,19 @@ namespace ft {
 
 			/* MODIFIERS */
 
-			void	clear() { _tree.clear(); } // TODO needs check on deleteNode
+			// void	clear() { _tree.clear(); } // TODO needs check on deleteNode
 
 			ft::pair<bool, iterator>	insert(const value_type &value) { return (_tree.insert(value)); }
+			/* --------- */
 
+			/* LOOKUP */
 
-
-
+			size_type	count(const Key &key) const { return (_tree.count(key)); };
+			/* --------- */
 			void	print() const { _tree.print(); }
 
 		private:
-			ft::tree<value_type, value_compare, allocator_type>	_tree;
+			Tree	_tree;
 	};
 }
 

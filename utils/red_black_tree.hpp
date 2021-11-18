@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/18 09:16:00 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/18 15:18:53 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,19 @@ namespace ft {
 			T*		operator->() { return (&content); }
 	};
 
-	template<class T>
+	template<class Node>
 	class	tree_iterator {
 		public:
-			typedef node<T>												Node;
-
 			typedef typename std::bidirectional_iterator_tag			iterator_category;
-			typedef typename ft::iterator_traits<T>::value_type			value_type;
-			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
-			typedef typename ft::iterator_traits<T>::pointer			pointer;
-			typedef typename ft::iterator_traits<T>::reference			reference;
+			typedef typename ft::iterator_traits<Node>::value_type		value_type;
+			typedef typename ft::iterator_traits<Node>::difference_type	difference_type;
+			typedef typename ft::iterator_traits<Node>::pointer			pointer;
+			typedef typename ft::iterator_traits<Node>::reference		reference;
 
 			/* CONSTRUCTOR */
 
-			tree_iterator() : _nill(), _root(), _current() {}
-			explicit	tree_iterator(Node *x, Node *nill) : _nill(nill), _current(x) {}
+			tree_iterator() : _nill(), _current() {}
+			explicit	tree_iterator(pointer x, pointer nill) : _nill(nill), _current(x) {}
 			explicit	tree_iterator(const tree_iterator &other) : _nill(other._nill), _current(other._current) {}
 			/* --------- */
 
@@ -123,8 +121,8 @@ namespace ft {
 				return (tmp);
 			}
 		private:
-			Node	*_nill;
-			Node	*_current;
+			pointer	_nill;
+			pointer	_current;
 	};
 
 	template<class T>
@@ -153,6 +151,11 @@ namespace ft {
 			typedef typename Tree_allocator::const_reference			const_reference;
 			typedef typename Tree_allocator::pointer					pointer;
 			typedef typename Tree_allocator::const_pointer				const_pointer;
+
+			typedef tree_iterator<pointer>								iterator;
+			typedef tree_iterator<const_pointer>						const_iterator;
+			typedef reverse_iterator<iterator>							reverse_iterator;
+			typedef reverse_iterator<const_iterator>					const_reverse_iterator;
 
 		private:
 			void	leftRotate(node *x) {
@@ -376,11 +379,11 @@ namespace ft {
 				_nill->left = _nill;
 				_nill->right = _nill;
 			}
-			template<class InputIt>
-			tree(InputIt first, InputIt last, const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill), _size(0) {
-				for (; first != last; firsr++)
-					insert(*first);
-			}
+			// template<class InputIt>
+			// tree(InputIt first, InputIt last, const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill), _size(0) {
+			// 	for (; first != last; firsr++)
+			// 		insert(*first);
+			// }
 			// tree(const tree &other) : _comp(other._comp), _alloc(other._alloc), _nill(_alloc.allocate(1)), _root(_nill) {
 
 			// }
@@ -403,6 +406,35 @@ namespace ft {
 			/* --------- */
 
 			Tree_allocator	get_Tree_allocator() const { return (_alloc); }
+
+			/* ACCESS OPERATOR */
+
+			// reference	operator[](const reference key) {
+			// 	node	*i = _root;
+			// 	while (*i != _nill) {
+
+			// 	}
+			// 	return ();
+			// }
+			/* --------- */
+
+			/* ITERATORS */
+
+			tree_iterator	begin() {
+				node	*i = _root;
+				while (i->left != _nill)
+					i = i->left;
+				return (tree_iterator(i));
+			}
+			const_iterator	begin() const {
+				node	*i = _root;
+				while (i->left != _nill)
+					i = i->left;
+				return (const_tree_iterator(i));
+			}
+
+			tree_iterator	end() { return (tree_iterator(_nill)); }
+			/* --------- */
 
 			/* CAPACITY */
 
@@ -444,6 +476,12 @@ namespace ft {
 			}
 			/* --------- */
 
+			/* LOOKUP */
+
+			size_type	count(const value_type &value) {
+
+			}
+			/* --------- */
 			void print(const std::string& prefix = std::string(), const node* node = NULL, bool isLeft = false) const {
 				if (node == NULL)
 					node = _root;
