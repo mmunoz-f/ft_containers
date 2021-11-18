@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/18 03:25:37 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/18 09:16:00 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,47 +20,6 @@
 # define M_RED		1
 
 namespace ft {
-
-	template<class T>
-	class	tree_iterator {
-
-		protected:
-			T	_nill;
-			T	_root;
-			T	_current;
-
-		public:
-			typedef typename std::bidirectional_iterator_tag			iterator_category;
-			typedef typename ft::iterator_traits<T>::value_type			value_type;
-			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
-			typedef typename ft::iterator_traits<T>::pointer			pointer;
-			typedef typename ft::iterator_traits<T>::reference			reference;
-
-			/* CONSTRUCTOR */
-
-			tree_iterator() : _nill(), _root(), _current() {}
-			explicit	tree_iterator(T x) : _current(x) {}
-			template<class U>
-			tree_iterator(const tree_iterator<U> &other) : _current(other.base()) {}
-			/* --------- */
-
-			/* ASSIGN OPERATOR */
-
-			template<class U>
-			tree_iterator	&operator=(const tree_iterator<U> &other) {
-				_current = other.base();
-				return (*this);
-			}
-			/* --------- */
-
-			T base() const { return (_current); }
-
-			/* ACCESS OPERATOR */
-
-			reference	operator*() const { return (*_current); }
-			pointer		operator->() const { return &(*_current); }
-			/* --------- */
-	};
 
 	template<class T>
 	class	node {
@@ -96,10 +55,97 @@ namespace ft {
 			T*		operator->() { return (&content); }
 	};
 
+	template<class T>
+	class	tree_iterator {
+		public:
+			typedef node<T>												Node;
+
+			typedef typename std::bidirectional_iterator_tag			iterator_category;
+			typedef typename ft::iterator_traits<T>::value_type			value_type;
+			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
+			typedef typename ft::iterator_traits<T>::pointer			pointer;
+			typedef typename ft::iterator_traits<T>::reference			reference;
+
+			/* CONSTRUCTOR */
+
+			tree_iterator() : _nill(), _root(), _current() {}
+			explicit	tree_iterator(Node *x, Node *nill) : _nill(nill), _current(x) {}
+			explicit	tree_iterator(const tree_iterator &other) : _nill(other._nill), _current(other._current) {}
+			/* --------- */
+
+			/* ASSIGN OPERATOR */
+
+			tree_iterator	&operator=(const tree_iterator &other) {
+				_nill = other._nill;
+				_current = other._current;
+				return (*this);
+			}
+			/* --------- */
+
+			/* ACCESS OPERATOR */
+
+			reference	operator*() const { return (*(*_current)); }
+			pointer		operator->() const { return &(*(*_current)); }
+			/* --------- */
+
+			/* ADVANCES AND DECREMENTS OPERATORS */
+			tree_iterator	&operator++() {
+				if (_current->right != _nill) {
+					_current = _current->right;
+					while (_curren->left != _nill)
+						_current = _current->left;
+				}
+				else
+					while (_current != _current->parent->left && _current != _nill)
+						_current = _current->parent;
+				return (*this);
+			}
+			tree_iterator	&operator--() {
+				if (_current->left != _nill) {
+					_current = _current->left;
+					while (_current->right != _nill)
+						_current = _current->right;
+				}
+				else
+					while (_current != _current->parent->right && _current != _nill)
+						_current = _current->left;
+				return (*this);
+			}
+
+			tree_iterator	&operator++(int) {
+				tree_iterator	tmp(*this);
+				++(*this);
+				return (tmp);
+			}
+			tree_iterator	&operator--(int) {
+				tree_iterator	tmp(*this);
+				--(*this);
+				return (tmp);
+			}
+		private:
+			Node	*_nill;
+			Node	*_current;
+	};
+
+	template<class T>
+	bool	operator==(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return (*Iter1 == *Iter2); }
+	template<class T>
+	bool	operator!=(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return !(Iter1 == Iter2); }
+	template<class T>
+	bool	operator<(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return (*Iter1 > *Iter2); }
+	template<class T>
+	bool	operator<=(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return !(Iter2 < Iter1); }
+	template<class T>
+	bool	operator>(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return (Iter2 < Iter1); }
+	template<class T>
+	bool	operator>=(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return !(Iter1 < Iter2); }
+
 	template<class T, class Compare, class Allocator>
 	class	tree {
 		public:
 			typedef T													value_type;
+
+			typedef std::size_t											size_type;
 
 			typedef node<T>												node;
 			typedef typename Allocator::template rebind<node>::other	Tree_allocator;
@@ -204,6 +250,30 @@ namespace ft {
 				_root->color = M_BLACK;
 			}
 
+			void	insertNode(const value_type &content) {
+				node	*newNode = _alloc.allocate(1);
+				_alloc.construct(newNode, node(content, _nill));
+				if (empty()) {
+					newNode->color = M_BLACK;
+					_root = newNode;
+					return ;
+				}
+				node	*i = _root;
+				node	*p;
+				while (i != _nill) {
+					p = i;
+					if (_comp(*(*i), *(*newNode)))
+						i = i->right;
+					else
+						i = i->left;
+				}
+				newNode->parent = p;
+				newNode->color = M_RED;
+				_comp(*(*p), *(*newNode)) ? p->right = newNode : p->left = newNode;
+				fixInsert(newNode);
+				_size++;
+			}
+
 			node	*replaceNill(node *n) {
 				node	*x;
 				x = (n->left == _nill ? n->right : n->left);
@@ -300,14 +370,17 @@ namespace ft {
 
 			/* CONSTRUCTORS */
 
-			tree(const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill) {
+			tree(const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill), _size(0) {
 				_nill->color = M_BLACK;
 				_nill->parent = _nill;
 				_nill->left = _nill;
 				_nill->right = _nill;
 			}
-			// template<class InputIt>
-			// tree(InputIt first, InputIt last, const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill) {}
+			template<class InputIt>
+			tree(InputIt first, InputIt last, const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill), _size(0) {
+				for (; first != last; firsr++)
+					insert(*first);
+			}
 			// tree(const tree &other) : _comp(other._comp), _alloc(other._alloc), _nill(_alloc.allocate(1)), _root(_nill) {
 
 			// }
@@ -334,32 +407,15 @@ namespace ft {
 			/* CAPACITY */
 
 			bool	empty() const { return (_root == _nill); }
+
+			size_type	size() const { return (_size); }
+
+			size_type	max_size() const { return (_alloc.max_size()); }
 			/* --------- */
 
 			/* INSERT */
 
-			void	insert(const value_type &content) {
-				node	*newNode = _alloc.allocate(1);
-				_alloc.construct(newNode, node(content, _nill));
-				if (empty()) {
-					newNode->color = M_BLACK;
-					_root = newNode;
-					return ;
-				}
-				node	*i = _root;
-				node	*p;
-				while (i != _nill) {
-					p = i;
-					if (_comp(*(*i), *(*newNode)))
-						i = i->right;
-					else
-						i = i->left;
-				}
-				newNode->parent = p;
-				newNode->color = M_RED;
-				_comp(*(*p), *(*newNode)) ? p->right = newNode : p->left = newNode;
-				fixInsert(newNode);
-			}
+			ft::pair<bool, iterator>	insert();
 			/* --------- */
 
 			/* DELETE */
@@ -384,6 +440,7 @@ namespace ft {
 				node	*w = x->getSibling();
 				while (reColorDelete(x, w));
 				resetNill();
+				_size()--;
 			}
 			/* --------- */
 
@@ -411,6 +468,8 @@ namespace ft {
 			Tree_allocator	_alloc;
 			node			*_nill;
 			node			*_root;
+
+			size_type		_size;
 	};
 }
 

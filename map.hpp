@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/15 21:14:45 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/18 07:30:12 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,20 @@ namespace ft {
 			/* CAPACITY */
 
 			bool	empty() const { return (_tree.empty()); }
+
+			size_type	size() const { return (_tree.size()); }
+
+			size_type	max_size() const { return (_tree.max_size()); }
 			/* --------- */
 
-			void	insert(const value_type &value) { _tree.insert(value); }
+			/* MODIFIERS */
+
+			void	clear() { _tree.clear(); } // TODO needs check on deleteNode
+
+			ft::pair<bool, iterator>	insert(const value_type &value) { return (_tree.insert(value)); }
+
+
+
 
 			void	print() const { _tree.print(); }
 
