@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/17 21:44:10 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/18 03:25:37 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,24 +245,47 @@ namespace ft {
 			}
 
 			static bool	deleteCase3(node &*x, node &*w) {
-				x->parent->left == x ? w->left->color = M_BLACK : w->right->color = M_BLACK;
-				w->color = M_RED;
+				if (x == x->parent->left) {
+					w->left->color = M_BLACK;
+					w->color = M_RED;
+					rightRotate(w);
+					w = x->parent->right;
+				}
+				else {
+					w->right->color = M_BLACK;
+					w->color = M_RED;
+					leftRotate(w);
+					w = x->parent->left;
+				}
+				return (deleteCase4(x, w));
+			}
 
-				// TODO estas por aqui
-
+			static bool	deleteCase4(node &*x, node &*w) {
+				w->color = x->parent->color;
+				x->parent->color = M_BLACK;
+				if (x == x->parent->left) {
+					w->right->color = M_BLACK;
+					leftRotate(x->parent);
+				}
+				else {
+					w->left->color = M_BLACK;
+					rightRotate(x->parent);
+				}
+				return (false);
 			}
 
 			static bool	reColorDelete(node &*x, node &*w) {
 				if (x->color == M_RED)
 					return (deleteCase0(x));
-				else if (x->color == M_BLACK && w->color == M_RED)
+				else if (w->color == M_RED)
 					return (deleteCase1(x, w));
-				else if (x->color == M_BLACK && w->color == M_BLACK && w->right->color == M_BLACK && w->left->color == M_BLACK)
+				else if (w->right->color == M_BLACK && w->left->color == M_BLACK)
 					return (deleteCase2(x, w));
-				else if (x->color == M_BLACK && w->color == M_BLACK
-					&& ((x->parent->left == x && w->left->color == M_RED && w->right->color == M_BLACK)
-						|| (x->parent->right == x && w->right->color == M_RED && w->left->color == M_BLACK)))
+				else if ((x->parent->left == x && w->left->color == M_RED && w->right->color == M_BLACK)
+						|| (x->parent->right == x && w->right->color == M_RED && w->left->color == M_BLACK))
 					return (deleteCase3(x, w));
+				else if ((x->parent->left == x && w->right->color == M_RED) || (x->parent->right == x && w->left->color == M_RED))
+					return (deleteCase4(x, w));
 				return (true);
 			}
 
@@ -354,7 +377,7 @@ namespace ft {
 					return ;
 				else if (n->color == M_RED && x->color == M_BLACK)
 					x->color = M_RED;
-				else if (n->color == M_BLACK && x->color == M_RED) {
+				else if (x->color == M_RED) {
 					x->color = M_BLACK;
 					return ;
 				}
