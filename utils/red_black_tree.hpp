@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/18 15:18:53 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/21 20:00:57 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,60 +15,31 @@
 
 # include <memory>
 # include "utils.hpp"
+# include "node.hpp"
 
 # define M_BLACK	0
 # define M_RED		1
 
 namespace ft {
 
-	template<class T>
-	class	node {
-		public:
-			T		content;
-			node	*parent;
-			node	*left;
-			node	*right;
-			bool		color;
-
-			node() : color(M_RED) {}
-			node(const T value,  node *nill) : content(value), parent(nill), left(nill), right(nill) {}
-			node(const  node &other) : content(other.content), parent(other.parent), left(other.left), right(other.right), color(other.color) {}
-
-			node	*getGrandParent() {
-				return (parent->parent);
-			}
-
-			node	*getSuccesor(node *nill) {
-				node	*s = right;
-				while (s->left != nill)
-					s = s->left;
-				return (s);
-			}
-
-			node	*getSibling() {
-				if (this == parent->right)
-					return (parent->left);
-				return (parent->right);
-			}
-
-			T&		operator*() { return (content); }
-			T*		operator->() { return (&content); }
-	};
-
 	template<class Node>
 	class	tree_iterator {
 		public:
 			typedef typename std::bidirectional_iterator_tag			iterator_category;
-			typedef typename ft::iterator_traits<Node>::value_type		value_type;
+			typedef typename ft::iterator_traits<Node>::value_type		node;
 			typedef typename ft::iterator_traits<Node>::difference_type	difference_type;
-			typedef typename ft::iterator_traits<Node>::pointer			pointer;
-			typedef typename ft::iterator_traits<Node>::reference		reference;
+			typedef typename ft::iterator_traits<Node>::pointer			nodePtr;
+			typedef typename ft::iterator_traits<Node>::reference		nodeRef;
+
+			typedef typename ft::node_traits<Node>::value_type			value_type;
+			typedef typename ft::node_traits<Node>::reference			reference;
+			typedef typename ft::node_traits<Node>::pointer				pointer;
 
 			/* CONSTRUCTOR */
 
 			tree_iterator() : _nill(), _current() {}
-			explicit	tree_iterator(pointer x, pointer nill) : _nill(nill), _current(x) {}
-			explicit	tree_iterator(const tree_iterator &other) : _nill(other._nill), _current(other._current) {}
+			tree_iterator(nodePtr x, nodePtr nill) : _nill(nill), _current(x) {}
+			tree_iterator(const tree_iterator &other) : _nill(other._nill), _current(other._current) {}
 			/* --------- */
 
 			/* ASSIGN OPERATOR */
@@ -82,15 +53,15 @@ namespace ft {
 
 			/* ACCESS OPERATOR */
 
-			reference	operator*() const { return (*(*_current)); }
-			pointer		operator->() const { return &(*(*_current)); }
+			reference	operator*() const { return (_current->content); }
+			pointer		operator->() const { return &(_current->content); }
 			/* --------- */
 
 			/* ADVANCES AND DECREMENTS OPERATORS */
 			tree_iterator	&operator++() {
 				if (_current->right != _nill) {
 					_current = _current->right;
-					while (_curren->left != _nill)
+					while (_current->left != _nill)
 						_current = _current->left;
 				}
 				else
@@ -110,27 +81,32 @@ namespace ft {
 				return (*this);
 			}
 
-			tree_iterator	&operator++(int) {
+			tree_iterator	operator++(int) {
 				tree_iterator	tmp(*this);
 				++(*this);
 				return (tmp);
 			}
-			tree_iterator	&operator--(int) {
+			tree_iterator	operator--(int) {
 				tree_iterator	tmp(*this);
 				--(*this);
 				return (tmp);
 			}
 		private:
-			pointer	_nill;
-			pointer	_current;
+			nodePtr	_nill;
+			nodePtr	_current;
+
+		template<class T>
+		friend bool	operator==(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2);
+		template<class T>
+		friend bool	operator<(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2);
 	};
 
 	template<class T>
-	bool	operator==(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return (*Iter1 == *Iter2); }
+	bool	operator==(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return (Iter1._current == Iter2._current); }
 	template<class T>
 	bool	operator!=(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return !(Iter1 == Iter2); }
 	template<class T>
-	bool	operator<(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return (*Iter1 > *Iter2); }
+	bool	operator<(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return (Iter1._current > Iter2._current); }
 	template<class T>
 	bool	operator<=(const tree_iterator<T> &Iter1, const tree_iterator<T> &Iter2) { return !(Iter2 < Iter1); }
 	template<class T>
@@ -145,21 +121,21 @@ namespace ft {
 
 			typedef std::size_t											size_type;
 
-			typedef node<T>												node;
-			typedef typename Allocator::template rebind<node>::other	Tree_allocator;
+			typedef node<T>												Node;
+			typedef typename Allocator::template rebind<Node>::other	Tree_allocator;
 			typedef typename Tree_allocator::reference					reference;
 			typedef typename Tree_allocator::const_reference			const_reference;
-			typedef typename Tree_allocator::pointer					pointer;
-			typedef typename Tree_allocator::const_pointer				const_pointer;
+			typedef typename Tree_allocator::pointer					NodePtr;
+			typedef typename Tree_allocator::const_pointer				const_NodePtr;
 
-			typedef tree_iterator<pointer>								iterator;
-			typedef tree_iterator<const_pointer>						const_iterator;
-			typedef reverse_iterator<iterator>							reverse_iterator;
-			typedef reverse_iterator<const_iterator>					const_reverse_iterator;
+			typedef ft::tree_iterator<NodePtr>							iterator;
+			typedef ft::tree_iterator<const_NodePtr>					const_iterator;
+			typedef ft::reverse_iterator<iterator>						reverse_iterator;
+			typedef ft::reverse_iterator<const_NodePtr>					const_reverse_iterator;
 
 		private:
-			void	leftRotate(node *x) {
-				node	*y = x->right;
+			void	leftRotate(NodePtr x) {
+				NodePtr y = x->right;
 				x->right = y->left;
 				if (y->left != _nill)
 					y->left->parent = x;
@@ -174,8 +150,8 @@ namespace ft {
 				y->left = x;
 			}
 
-			void	rightRotate(node *y) {
-				node	*x = y->left;
+			void	rightRotate(NodePtr y) {
+				NodePtr x = y->left;
 				y->left = x->right;
 				if (x->right != _nill)
 					x->right->parent = y;
@@ -190,25 +166,13 @@ namespace ft {
 				x->right = y;
 			}
 
-			void	leftRightRotate(node *z) {
-				node	*x = z->left;
-				leftRotate(x);
-				rightRotate(z);
-			}
-
-			void	rightLeftRotate(node *z) {
-				node	*x = z->right;
-				rightRotate(x);
-				leftRotate(z);
-			}
-
-			static void	reColorInsert(node *n) {
+			static void	reColorInsert(NodePtr n) {
 				n->getGrandParent()->right->color = M_BLACK;
 				n->getGrandParent()->left->color = M_BLACK;
 				n->getGrandParent()->color = M_RED;
 			}
 
-			void	leftCase(node *n) {
+			void	leftCase(NodePtr n) {
 				if (n->getGrandParent()->right->color == M_RED) {
 					reColorInsert(n);
 					n = n->getGrandParent();
@@ -224,7 +188,7 @@ namespace ft {
 				}
 			}
 
-			void	rightCase(node *n) {
+			void	rightCase(NodePtr n) {
 				if (n->getGrandParent()->left->color == M_RED) {
 					reColorInsert(n);
 					n = n->getGrandParent();
@@ -240,7 +204,7 @@ namespace ft {
 				}
 			}
 
-			void	fixInsert(node *newNode) {
+			void	fixInsert(NodePtr newNode) {
 				while (newNode->parent->color == M_RED) {
 					if (newNode->getGrandParent()->left == newNode->parent) // Case 1
 						leftCase(newNode);
@@ -253,32 +217,8 @@ namespace ft {
 				_root->color = M_BLACK;
 			}
 
-			void	insertNode(const value_type &content) {
-				node	*newNode = _alloc.allocate(1);
-				_alloc.construct(newNode, node(content, _nill));
-				if (empty()) {
-					newNode->color = M_BLACK;
-					_root = newNode;
-					return ;
-				}
-				node	*i = _root;
-				node	*p;
-				while (i != _nill) {
-					p = i;
-					if (_comp(*(*i), *(*newNode)))
-						i = i->right;
-					else
-						i = i->left;
-				}
-				newNode->parent = p;
-				newNode->color = M_RED;
-				_comp(*(*p), *(*newNode)) ? p->right = newNode : p->left = newNode;
-				fixInsert(newNode);
-				_size++;
-			}
-
-			node	*replaceNill(node *n) {
-				node	*x;
+			NodePtr	replaceNill(NodePtr n) {
+				NodePtr x;
 				x = (n->left == _nill ? n->right : n->left);
 				if (n->parent->left == n)
 					n->parent->left = x;
@@ -287,12 +227,12 @@ namespace ft {
 				return (x);
 			}
 
-			static bool	deleteCase0(node &*x) {
+			bool	deleteCase0(NodePtr x) {
 				x->color = M_BLACK;
 				return (false);
 			}
 
-			static bool	deleteCase1(node &*x, node &*w) {
+			bool	deleteCase1(NodePtr x, NodePtr w) {
 				w->color = M_BLACK;
 				x->parent->color = M_RED;
 				if (x == x->parent->left)
@@ -306,7 +246,7 @@ namespace ft {
 				return (true);
 			}
 
-			static bool	deleteCase2(node &*x, node &*w) {
+			bool	deleteCase2(NodePtr x, NodePtr w) {
 				w->color = M_RED;
 				x = x->parent;
 				if (x->color == M_RED) {
@@ -317,7 +257,7 @@ namespace ft {
 				return (true);
 			}
 
-			static bool	deleteCase3(node &*x, node &*w) {
+			bool	deleteCase3(NodePtr x, NodePtr w) {
 				if (x == x->parent->left) {
 					w->left->color = M_BLACK;
 					w->color = M_RED;
@@ -333,7 +273,7 @@ namespace ft {
 				return (deleteCase4(x, w));
 			}
 
-			static bool	deleteCase4(node &*x, node &*w) {
+			bool	deleteCase4(NodePtr x, NodePtr w) {
 				w->color = x->parent->color;
 				x->parent->color = M_BLACK;
 				if (x == x->parent->left) {
@@ -347,7 +287,7 @@ namespace ft {
 				return (false);
 			}
 
-			static bool	reColorDelete(node &*x, node &*w) {
+			bool	reColorDelete(NodePtr x, NodePtr w) {
 				if (x->color == M_RED)
 					return (deleteCase0(x));
 				else if (w->color == M_RED)
@@ -365,8 +305,8 @@ namespace ft {
 			void	resetNill() {
 				_nill->color = M_BLACK;
 				_nill->parent = _nill;
-				_nill->right = _nill;
-				_nill->left = _nill;
+				_nill->right = _root;
+				_nill->left = _root;
 			}
 
 		public:
@@ -409,31 +349,31 @@ namespace ft {
 
 			/* ACCESS OPERATOR */
 
-			// reference	operator[](const reference key) {
-			// 	node	*i = _root;
-			// 	while (*i != _nill) {
-
-			// 	}
-			// 	return ();
-			// }
 			/* --------- */
 
 			/* ITERATORS */
 
-			tree_iterator	begin() {
-				node	*i = _root;
+			iterator	begin() {
+				NodePtr i = _root;
 				while (i->left != _nill)
 					i = i->left;
-				return (tree_iterator(i));
+				return (iterator(i, _nill));
 			}
 			const_iterator	begin() const {
-				node	*i = _root;
+				NodePtr i = _root;
 				while (i->left != _nill)
 					i = i->left;
-				return (const_tree_iterator(i));
+				return (const_iterator(i, _nill));
 			}
 
-			tree_iterator	end() { return (tree_iterator(_nill)); }
+			iterator	end() { return (iterator(_nill, _nill)); }
+			const_iterator	end() const { return (const_iterator(_nill, _nill)); }
+
+			reverse_iterator	rbegin() { return (reverse_iterator(begin())); }
+			const_reverse_iterator	rbegin() const { return (const_reverse_iterator(begin())); }
+
+			reverse_iterator	rend() { return (reverse_iterator(end())); }
+			const_reverse_iterator	rend() const { return (const_reverse_iterator(end())); }
 			/* --------- */
 
 			/* CAPACITY */
@@ -447,65 +387,87 @@ namespace ft {
 
 			/* INSERT */
 
-			ft::pair<bool, iterator>	insert();
+			iterator	insertNode(const value_type &content) {
+				NodePtr	newNode = _alloc.allocate(1);
+				_alloc.construct(newNode, Node(content, _nill));
+				NodePtr x = newNode;
+				if (empty()) {
+					x->color = M_BLACK;
+					_root = x;
+					return (iterator(newNode, _nill));
+				}
+				NodePtr i = _root;
+				NodePtr p;
+				while (i != _nill) {
+					p = i;
+					if (_comp(i->content, x->content))
+						i = i->right;
+					else
+						i = i->left;
+				}
+				x->parent = p;
+				x->color = M_RED;
+				_comp(p->content, x->content) ? p->right = x : p->left = x;
+				fixInsert(x);
+				resetNill();
+				_size++;
+				return (iterator(newNode, _nill));
+			}
 			/* --------- */
 
 			/* DELETE */
 
-			void	deleteNode(node	*n) {
-				bool	originalColor = n->color;
-				node	*x;
-				if (n->left == _nill || n->right == _nill)
-					x = replaceNill(node);
-				else {
-					x = n->getSuccesor(_nill);
-					x->parent->left = _nill;
-				}
-				if (n->color == M_RED && (x == _nill || x->color == M_RED))
-					return ;
-				else if (n->color == M_RED && x->color == M_BLACK)
-					x->color = M_RED;
-				else if (x->color == M_RED) {
-					x->color = M_BLACK;
-					return ;
-				}
-				node	*w = x->getSibling();
-				while (reColorDelete(x, w));
-				resetNill();
-				_size()--;
-			}
+			// void	deleteNode(NodePtr n) {
+			// 	bool	originalColor = n->color;
+			// 	NodePtr	x;
+			// 	if (n->left == _nill || n->right == _nill)
+			// 		x = replaceNill(n);
+			// 	else {
+			// 		x = n->getSuccesor(_nill);
+			// 		x->parent->left = _nill;
+			// 	}
+			// 	if (n->color == M_RED && (x == _nill || x->color == M_RED))
+			// 		return ;
+			// 	else if (n->color == M_RED && x->color == M_BLACK)
+			// 		x->color = M_RED;
+			// 	else if (x->color == M_RED) {
+			// 		x->color = M_BLACK;
+			// 		return ;
+			// 	}
+			// 	NodePtr w = x->getSibling();
+			// 	while (reColorDelete(x, w));
+			// 	resetNill();
+			// 	_size()--;
+			// }
 			/* --------- */
 
 			/* LOOKUP */
 
-			size_type	count(const value_type &value) {
-
-			}
 			/* --------- */
-			void print(const std::string& prefix = std::string(), const node* node = NULL, bool isLeft = false) const {
-				if (node == NULL)
-					node = _root;
-				if (node != _nill) {
+			void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
+				if (n == NULL)
+					n = _root;
+				if (n != _nill) {
 					std::cout << BKCOL << prefix << NOCOL;
 					std::cout << BKCOL << (isLeft ? "├──" : "└──" ) << NOCOL;
-					if (node->color == M_RED)
-						std::cout << RDCOL << node->content.first << NOCOL << std::endl;
+					if (n->color == M_RED)
+						std::cout << RDCOL << n->content.first << NOCOL << std::endl;
 					else {
-						if (node->content.first == -1)
+						if (n->content.first == -1)
 							std::cout << "nil" << NOCOL << std::endl;
 						else
-							std::cout << node->content.first << NOCOL << std::endl;
+							std::cout << n->content.first << NOCOL << std::endl;
 					}
-					print(prefix + (isLeft ? "│   " : "    "), node->right, true);
-					print(prefix + (isLeft ? "│   " : "    "), node->left, false);
+					print(prefix + (isLeft ? "│   " : "    "), n->right, true);
+					print(prefix + (isLeft ? "│   " : "    "), n->left, false);
 				}
 			}
 
 		private:
 			Compare			_comp;
 			Tree_allocator	_alloc;
-			node			*_nill;
-			node			*_root;
+			NodePtr			_nill;
+			NodePtr			_root;
 
 			size_type		_size;
 	};

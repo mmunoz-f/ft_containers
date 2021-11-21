@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/18 15:13:25 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/21 20:04:48 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,26 +80,31 @@ namespace ft {
 			// }
 			/* --------- */
 
-			// allocator_type	get_allocator() const { return (_tree.get_allocator()); }
+			allocator_type	get_allocator() const { return (_tree.get_allocator()); }
 
 			/* ELEMENT ACCESS */
 
-			// reference	operator[](const Key &key) {}
+			reference	operator[](const Key &key) {
+				for (iterator it = _tree.begin(); it != _tree.end(); it++)
+					if (key == it->first)
+						return (it->second);
+				return ((insert(value_type(key, mapped_type()))->second)->second);
+			}
 			/* --------- */
 
 			/* ITERATORS */
 
 			iterator				begin() { return (_tree.begin()); }
-			const_iterator			begin() { return (_tree.begin()); }
+			const_iterator			begin() const { return (_tree.begin()); }
 
 			iterator				end() { return (_tree.end()); }
-			const_iterator			end() { return (_tree.end()); }
+			const_iterator			end() const { return (_tree.end()); }
 
 			reverse_iterator		rbegin() { return (_tree.rbegin()); }
-			const_reverse_iterator	rbegin() { return (_tree.rbegin()); }
+			const_reverse_iterator	rbegin() const { return (_tree.rbegin()); }
 
 			reverse_iterator		rend() { return (_tree.rend()); }
-			const_reverse_iterator	rend() { return (_tree.rend()) }
+			const_reverse_iterator	rend() const { return (_tree.rend()); }
 			/* --------- */
 
 			/* CAPACITY */
@@ -115,13 +120,25 @@ namespace ft {
 
 			// void	clear() { _tree.clear(); } // TODO needs check on deleteNode
 
-			ft::pair<bool, iterator>	insert(const value_type &value) { return (_tree.insert(value)); }
+			ft::pair<bool, iterator>	insert(const value_type &value) {
+				for (iterator it = _tree.begin(); it != _tree.end(); it++)
+					if (value.first == it->first)
+						return (ft::pair<bool, iterator>(false, it));
+				return (ft::pair<bool, iterator>(true, _tree.insertNode(value)));
+			}
 			/* --------- */
 
 			/* LOOKUP */
 
-			size_type	count(const Key &key) const { return (_tree.count(key)); };
+			size_type	count(const Key &key) const {
+				size_type	i = 0;
+				for (const_iterator it = _tree.begin(); it != _tree.end(); it++)
+					if (key == it->first)
+						i++;
+				return (i);
+			};
 			/* --------- */
+
 			void	print() const { _tree.print(); }
 
 		private:
