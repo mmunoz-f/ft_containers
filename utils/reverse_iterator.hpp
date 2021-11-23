@@ -53,7 +53,7 @@ namespace ft {
 
 			/* ACCESS OPERATORS */
 
-			reference	operator*() const { return *(_current - 1); }
+			reference	operator*() const { return *(--(T(_current))); }
 			pointer		operator->() const { return &(*(*this)); }
 
 			reference	operator[](difference_type n) const { return *(*this + n); }
