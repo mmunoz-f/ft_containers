@@ -241,7 +241,7 @@ namespace ft {
 			value_compare	value_comp() const { return (value_compare(Compare())); }
 			/* --------- */
 
-			void	print() const { _tree.print(); }
+			void	print() const { _tree.print(); } // TODO tmp
 
 		private:
 			Tree	_tree;
