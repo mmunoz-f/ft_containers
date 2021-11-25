@@ -13,6 +13,7 @@
 #ifndef __MAP_H__
 # define __MAP_H__
 
+# include <stddef.h>
 # include <functional>
 # include <memory>
 # include "utils/pair.hpp"
@@ -64,12 +65,10 @@ namespace ft {
 
 			template<class InputIt>
 			map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator &alloc = Allocator()) : _tree(value_compare(comp), alloc) {
-				for (;first != last; first++)
-					insert(*first);
+				insert(first, last);
 			}
-			map(const map &other) : _tree(other._tree) {
-				for (map::const_iterator it = other.begin(); it != other.end(); it++)
-					insert(*it);
+			map(const map &other) : _tree(other._tree._comp, other._tree._alloc) {
+				insert(other.begin(), other.end());
 			}
 			/* --------- */
 
@@ -83,8 +82,7 @@ namespace ft {
 			map	&operator=(const map &other) {
 				if (this == &other)
 					return (*this);
-				for (map::const_iterator it = other.begin(); it != other.end(); it++)
-					insert(*it);
+				insert(other.begin(), other.end());
 				return (*this);
 			}
 			/* --------- */
@@ -147,14 +145,14 @@ namespace ft {
 				iterator	it;
 				if ((it = find(value.first)) != end())
 					return (ft::pair<iterator, bool>(it, false));
-				return (ft::pair<iterator, bool>(_tree.insertNode(value), true));
+				return (_tree.insertNode(value));
 			}
 			iterator	insert(iterator hint, const value_type &value) {
 				(void)hint; // se ignora porque se autobalancea
 				iterator	it;
 				if ((it = find(value.first)) != end())
 					return (it);
-				return (_tree.insertNode(value));
+				return (_tree.insertNode(value).first);
 			}
 			template<class InputIt>
 			void	insert(InputIt first, InputIt last) {
@@ -162,15 +160,20 @@ namespace ft {
 					insert(*first);
 			}
 
-			// void	erase(iterator pos) {
-
-			// }
-			// void	erase(iterator first, iterator last) {
-			
-			// }
-			// void	erase(const Key &key) {
-
-			// }
+			void	erase(iterator pos) {
+				_tree.deleteNode(pos.base());
+			}
+			void	erase(iterator first, iterator last) {
+				for (;first != last; first++)
+					erase(first);
+			}
+			size_type	erase(const Key &key) {
+				iterator	it;
+				size_type	i = 0;
+				for (; (it = find(key)) != end(); i++)
+					erase(it);
+				return (i);
+			}
 
 			void	swap(map &other) {
 				ft::swap(*this, other);
@@ -209,26 +212,26 @@ namespace ft {
 
 			iterator	lower_bound(const Key &key) {
 				for (iterator it = begin(); it != end(); it++)
-					if (!Compare()(key, it->first))
+					if (!Compare()(it->first, key))
 						return (it);
 				return (end());
 			}
 			const_iterator	lower_bound(const Key &key) const {
 				for (const_iterator it = begin(); it != end(); it++)
-					if (!Compare()(key, it->first))
+					if (!Compare()(it->first, key))
 						return (it);
 				return (end());
 			}
 
 			iterator	upper_bound(const Key &key) {
 				for (iterator it = begin(); it != end(); it++)
-					if (!Compare()(it->first, key)) 
+					if (Compare()(key, it->first)) 
 						return (it);
 				return (end());
 			}
 			const_iterator	upper_bound(const Key &key) const {
 				for (const_iterator it = begin(); it != end(); it++)
-					if (!Compare()(it->first, key)) 
+					if (Compare()(key, it->first)) 
 						return (it);
 				return (end());
 			}

@@ -74,14 +74,14 @@ namespace ft {
 		}
 
 		static void	reColorInsert(NodePtr n) {
-			n->getGrandParent()->right->color = M_BLACK;
-			n->getGrandParent()->left->color = M_BLACK;
-			n->getGrandParent()->color = M_RED;
+			n->right->color = M_BLACK;
+			n->left->color = M_BLACK;
+			n->color = M_RED;
 		}
 
-		void	leftCase(NodePtr n) {
+		void	leftCase(NodePtr &n) {
 			if (n->getGrandParent()->right->color == M_RED) {
-				reColorInsert(n);
+				reColorInsert(n->getGrandParent());
 				n = n->getGrandParent();
 			}
 			else {
@@ -95,9 +95,9 @@ namespace ft {
 			}
 		}
 
-		void	rightCase(NodePtr n) {
+		void	rightCase(NodePtr &n) {
 			if (n->getGrandParent()->left->color == M_RED) {
-				reColorInsert(n);
+				reColorInsert(n->getGrandParent());
 				n = n->getGrandParent();
 			}
 			else {
@@ -113,15 +113,13 @@ namespace ft {
 
 		void	fixInsert(NodePtr newNode) {
 			while (newNode->parent->color == M_RED) {
-				if (newNode->getGrandParent()->left == newNode->parent) // Case 1
+				if (newNode->getGrandParent()->left == newNode->parent)     
 					leftCase(newNode);
-				else {
+				else
 					rightCase(newNode);
-				}
 				if (newNode == _root)
 					break;
 			}
-			_root->color = M_BLACK;
 		}
 
 		NodePtr	replaceNill(NodePtr n) {
@@ -134,12 +132,12 @@ namespace ft {
 			return (x);
 		}
 
-		bool	deleteCase0(NodePtr x) {
+		bool	deleteCase0(NodePtr &x) {
 			x->color = M_BLACK;
 			return (false);
 		}
 
-		bool	deleteCase1(NodePtr x, NodePtr w) {
+		bool	deleteCase1(NodePtr &x, NodePtr &w) {
 			w->color = M_BLACK;
 			x->parent->color = M_RED;
 			if (x == x->parent->left)
@@ -153,7 +151,7 @@ namespace ft {
 			return (true);
 		}
 
-		bool	deleteCase2(NodePtr x, NodePtr w) {
+		bool	deleteCase2(NodePtr &x, NodePtr &w) {
 			w->color = M_RED;
 			x = x->parent;
 			if (x->color == M_RED) {
@@ -164,7 +162,7 @@ namespace ft {
 			return (true);
 		}
 
-		bool	deleteCase3(NodePtr x, NodePtr w) {
+		bool	deleteCase3(NodePtr &x, NodePtr &w) {
 			if (x == x->parent->left) {
 				w->left->color = M_BLACK;
 				w->color = M_RED;
@@ -180,7 +178,7 @@ namespace ft {
 			return (deleteCase4(x, w));
 		}
 
-		bool	deleteCase4(NodePtr x, NodePtr w) {
+		bool	deleteCase4(NodePtr &x, NodePtr &w) {
 			w->color = x->parent->color;
 			x->parent->color = M_BLACK;
 			if (x == x->parent->left) {
@@ -194,7 +192,7 @@ namespace ft {
 			return (false);
 		}
 
-		bool	reColorDelete(NodePtr x, NodePtr w) {
+		bool	reColorDelete(NodePtr &x, NodePtr &w) {
 			if (x->color == M_RED)
 				return (deleteCase0(x));
 			else if (w->color == M_RED)
@@ -209,16 +207,17 @@ namespace ft {
 			return (true);
 		}
 
-		void	resetNill() {
+		void	resetCore() {
 			_nill->color = M_BLACK;
 			_nill->parent = _nill;
 			_nill->right = _root;
 			_nill->left = _root;
+			_root->parent = _nill;
+			_root->color = M_BLACK;
 		}
 
 		/* CONSTRUCTORS */
-		tree();
-		tree(const Compare &comp, const Tree_allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill), _size(0) {
+		tree(const Compare &comp, const Allocator &alloc) : _comp(comp), _alloc(alloc), _nill(_alloc.allocate(1)), _root(_nill), _size(0) {
 			_nill->color = M_BLACK;
 			_nill->parent = _nill;
 			_nill->left = _root;
@@ -270,58 +269,61 @@ namespace ft {
 
 		/* INSERT */
 
-		iterator	insertNode(const value_type &content) {
-			NodePtr	newNode = _alloc.allocate(1);
-			_alloc.construct(newNode, Node(content, _nill));
-			NodePtr x = newNode;
+		ft::pair<iterator, bool>	insertNode(const value_type &content) {
+			NodePtr	newNode;
 			if (empty()) {
-				x->color = M_BLACK;
-				_root = x;
-				return (iterator(newNode, _nill));
+				newNode = _alloc.allocate(1);
+				_alloc.construct(newNode, Node(content, _nill));
+				_root = newNode;
 			}
-			NodePtr i = _root;
-			NodePtr p;
-			while (i != _nill) {
-				p = i;
-				if (_comp(i->content, x->content))
-					i = i->right;
-				else
-					i = i->left;
+			else {
+				NodePtr i = _root;
+				NodePtr p;
+				while (i != _nill) {
+					p = i;
+					if (_comp(i->content, content))
+						i = i->right;
+					else if (_comp(content, i->content))
+						i = i->left;
+					else
+						return (ft::pair<iterator, bool>(iterator(i, _nill), false));
+				}
+				newNode = _alloc.allocate(1);
+				_alloc.construct(newNode, Node(content, _nill));
+				NodePtr x = newNode;
+				x->parent = p;
+				_comp(p->content, content) ? p->right = x : p->left = x;
+				fixInsert(x);
 			}
-			x->parent = p;
-			x->color = M_RED;
-			_comp(p->content, x->content) ? p->right = x : p->left = x;
-			fixInsert(x);
-			resetNill();
+			resetCore();
 			_size++;
-			return (iterator(newNode, _nill));
+			return (ft::pair<iterator, bool>(iterator(newNode, _nill), false));
 		}
 		/* --------- */
 
 		/* DELETE */
 
-		// void	deleteNode(NodePtr n) {
-		// 	bool	originalColor = n->color;
-		// 	NodePtr	x;
-		// 	if (n->left == _nill || n->right == _nill)
-		// 		x = replaceNill(n);
-		// 	else {
-		// 		x = n->getSuccesor(_nill);
-		// 		x->parent->left = _nill;
-		// 	}
-		// 	if (n->color == M_RED && (x == _nill || x->color == M_RED))
-		// 		return ;
-		// 	else if (n->color == M_RED && x->color == M_BLACK)
-		// 		x->color = M_RED;
-		// 	else if (x->color == M_RED) {
-		// 		x->color = M_BLACK;
-		// 		return ;
-		// 	}
-		// 	NodePtr w = x->getSibling();
-		// 	while (reColorDelete(x, w));
-		// 	resetNill();
-		// 	_size()--;
-		// }
+		void	deleteNode(NodePtr n) {
+			NodePtr	x;
+			if (n->left == _nill || n->right == _nill)
+				x = replaceNill(n);
+			else {
+				x = n->getSuccesor(_nill);
+				x->parent->left = _nill;
+			}
+			if (n->color == M_RED && (x == _nill || x->color == M_RED))
+				return ;
+			else if (n->color == M_RED && x->color == M_BLACK)
+				x->color = M_RED;
+			else if (x->color == M_RED) {
+				x->color = M_BLACK;
+				return ;
+			}
+			NodePtr w = x->getSibling();
+			while (reColorDelete(x, w));
+			resetCore();
+			_size--;
+		}
 		/* --------- */
 
 		/* LOOKUP */
@@ -331,18 +333,34 @@ namespace ft {
 			if (n == NULL)
 				n = _root;
 			if (n != _nill) {
-				std::cout << BKCOL << prefix << NOCOL;
-				std::cout << BKCOL << (isLeft ? "├──" : "└──" ) << NOCOL;
+				std::cout << prefix;
+				std::cout << (isLeft ? "├──" : "└──" );
 				if (n->color == M_RED)
-					std::cout << RDCOL << n->content.first << NOCOL << std::endl;
+					std::cout << "RED: " << n->content.first << std::endl;
 				else
-					std::cout << n->content.first << NOCOL << std::endl;
+					std::cout << "BLACK: " << n->content.first << std::endl;
 				print(prefix + (isLeft ? "│   " : "    "), n->right, true);
 				print(prefix + (isLeft ? "│   " : "    "), n->left, false);
 			}
 			else
-				std::cout << BKCOL << prefix << NOCOL << "nill" << std::endl; 
+				std::cout << prefix << "nill" << std::endl; 
 		}
+		// void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
+		// 	if (n == NULL)
+		// 		n = _root;
+		// 	if (n != _nill) {
+		// 		std::cout << BKCOL << prefix << NOCOL;
+		// 		std::cout << BKCOL << (isLeft ? "├──" : "└──" ) << NOCOL;
+		// 		if (n->color == M_RED)
+		// 			std::cout << RDCOL << n->content.first << NOCOL << std::endl;
+		// 		else
+		// 			std::cout << n->content.first << NOCOL << std::endl;
+		// 		print(prefix + (isLeft ? "│   " : "    "), n->right, true);
+		// 		print(prefix + (isLeft ? "│   " : "    "), n->left, false);
+		// 	}
+		// 	else
+		// 		std::cout << BKCOL << prefix << NOCOL << "nill" << std::endl; 
+		// }
 
 		Compare			_comp;
 		Tree_allocator	_alloc;

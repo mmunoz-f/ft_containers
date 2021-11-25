@@ -3,7 +3,7 @@
 
 int	main (void) {
 	ft::map<int, int>	m;
-	std::map<int, int>	n;
+	ft::map<int, int>	n;
 
 	m.insert(ft::make_pair(14,3));
 	m.insert(ft::make_pair(75,3));
@@ -16,6 +16,15 @@ int	main (void) {
 	m.insert(ft::make_pair(13,3));
 
 	m.print();
-	std::cout << "Count: " << m.count(12) << std::endl;
+	std::cout << "Count: " << m.size() << std::endl;
+
+//	m.erase(m.find(-8));
+
+//	m.print();
+//	std::cout << "Count: " << m.size() << std::endl;
+
+	n = m;
+	n.print();
+
 	return (0);
 }

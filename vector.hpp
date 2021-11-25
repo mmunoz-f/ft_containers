@@ -13,6 +13,7 @@
 #ifndef __VECTOR_H__
 # define __VECTOR_H__
 
+# include <stddef.h>
 # include <memory>
 # include <stdexcept>
 # include "utils/utils.hpp"

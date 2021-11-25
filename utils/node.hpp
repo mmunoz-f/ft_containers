@@ -14,15 +14,16 @@ namespace	ft {
 			typedef const T*	const_pointer;
 			typedef const T&	const_reference;
 
-			value_type	content;
 			node		*parent;
 			node		*left;
 			node		*right;
+			value_type	content;
 			bool		color;
 
 			node() : color(M_RED) {}
-			node(const value_type value,  node *nill) : content(value), parent(nill), left(nill), right(nill) {}
-			node(const  node &other) : content(other.content), parent(other.parent), left(other.left), right(other.right), color(other.color) {}
+			node(const value_type value, node *nill) : parent(nill), left(nill), right(nill), content(value), color(M_RED) {}
+			node(const node &other) : parent(other.parent), left(other.left), right(other.right), content(other.content), color(other.color) {}
+			~node() {}
 
 			node	*getGrandParent() {
 				return (parent->parent);

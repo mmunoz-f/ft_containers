@@ -83,7 +83,10 @@ namespace   ft {
 			nodePtr	_nill;
 			nodePtr	_current;
 
+			nodePtr	base() {return (_current); };
+
 		template<class> friend class tree_iterator;
+		template<class, class, class, class> friend class map;
 
 		template<class T, class U>
 		friend bool	operator==(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2);
