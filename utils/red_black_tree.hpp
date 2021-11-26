@@ -195,15 +195,17 @@ namespace ft {
 		bool	reColorDelete(NodePtr &x, NodePtr &w) {
 			if (x->color == M_RED)
 				return (deleteCase0(x));
-			else if (w->color == M_RED)
-				return (deleteCase1(x, w));
-			else if (w->right->color == M_BLACK && w->left->color == M_BLACK)
+			if (x->color == M_BLACK && w->color == M_RED)
+				deleteCase1(x, w);
+			if (x->color == M_BLACK && w->color == M_BLACK && w->right->color == M_BLACK && w->left->color == M_BLACK)
 				return (deleteCase2(x, w));
-			else if ((x->parent->left == x && w->left->color == M_RED && w->right->color == M_BLACK)
-					|| (x->parent->right == x && w->right->color == M_RED && w->left->color == M_BLACK))
-				return (deleteCase3(x, w));
-			else if ((x->parent->left == x && w->right->color == M_RED) || (x->parent->right == x && w->left->color == M_RED))
+			if (x->color == M_BLACK && w->color == M_BLACK && ((x->parent->left == x && w->left->color == M_RED && w->right->color == M_BLACK)
+					|| (x->parent->right == x && w->right->color == M_RED && w->left->color == M_BLACK))) {
+				deleteCase3(x, w);
 				return (deleteCase4(x, w));
+			}
+			if (x->color == M_BLACK && w->color == M_BLACK && ((x->parent->left == x && w->right->color == M_RED) || (x->parent->right == x && w->left->color == M_RED)))
+				return (deleteCase4(x, w));			
 			return (true);
 		}
 
@@ -251,11 +253,11 @@ namespace ft {
 		iterator	end() { return (iterator(_nill, _nill)); }
 		const_iterator	end() const { return (const_iterator(_nill, _nill)); }
 
-		reverse_iterator	rbegin() { return (reverse_iterator(begin())); }
-		const_reverse_iterator	rbegin() const { return (const_reverse_iterator(begin())); }
+		reverse_iterator	rbegin() { return (reverse_iterator(end())); }
+		const_reverse_iterator	rbegin() const { return (const_reverse_iterator(end())); }
 
-		reverse_iterator	rend() { return (reverse_iterator(end())); }
-		const_reverse_iterator	rend() const { return (const_reverse_iterator(end())); }
+		reverse_iterator	rend() { return (reverse_iterator(begin())); }
+		const_reverse_iterator	rend() const { return (const_reverse_iterator(begin())); }
 		/* --------- */
 
 		/* CAPACITY */
@@ -297,7 +299,7 @@ namespace ft {
 			}
 			resetCore();
 			_size++;
-			return (ft::pair<iterator, bool>(iterator(newNode, _nill), false));
+			return (ft::pair<iterator, bool>(iterator(newNode, _nill), true));
 		}
 		/* --------- */
 
@@ -305,11 +307,12 @@ namespace ft {
 
 		void	deleteNode(NodePtr n) {
 			NodePtr	x;
+			std::cout << "erased content key: " << n->content.first << std::endl;
 			if (n->left == _nill || n->right == _nill)
 				x = replaceNill(n);
 			else {
 				x = n->getSuccesor(_nill);
-				x->parent->left = _nill;
+				x == x->parent->left ? x->parent->left = _nill : x->parent->right = _nill;
 			}
 			if (n->color == M_RED && (x == _nill || x->color == M_RED))
 				return ;
@@ -328,39 +331,78 @@ namespace ft {
 
 		/* LOOKUP */
 
-		/* --------- */
-		void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
-			if (n == NULL)
-				n = _root;
-			if (n != _nill) {
-				std::cout << prefix;
-				std::cout << (isLeft ? "├──" : "└──" );
-				if (n->color == M_RED)
-					std::cout << "RED: " << n->content.first << std::endl;
+		size_type	count(const value_type &value) const {
+			NodePtr		i = _root;
+			while (i != _nill) {
+				if (_comp(value, i->content))
+					i = i->left;
+				else if (_comp(i->content, value))
+					i = i->right;
 				else
-					std::cout << "BLACK: " << n->content.first << std::endl;
-				print(prefix + (isLeft ? "│   " : "    "), n->right, true);
-				print(prefix + (isLeft ? "│   " : "    "), n->left, false);
+					return (1);
 			}
-			else
-				std::cout << prefix << "nill" << std::endl; 
+			return (0);
 		}
+
+		iterator	find(const value_type &value) {
+			NodePtr	i = _root;
+			while (i != _nill) {
+				if (_comp(value, i->content))
+					i = i->left;
+				else if (_comp(i->content, value))
+					i = i->right;
+				else
+					return (iterator(i, _nill));
+			}
+			return (end());
+		}
+		const_iterator	find(const value_type &value) const {
+			NodePtr	i = _root;
+			while (i != _nill) {
+				if (_comp(value, i->content))
+					i = i->left;
+				else if (_comp(i->content, value))
+					i = i->right;
+				else
+					return (const_iterator(i, _nill));
+			}
+			return (end());
+		}
+
+		/* --------- */
 		// void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
 		// 	if (n == NULL)
 		// 		n = _root;
+		// 	std::cout << n->parent->content.first << std::endl;
 		// 	if (n != _nill) {
-		// 		std::cout << BKCOL << prefix << NOCOL;
-		// 		std::cout << BKCOL << (isLeft ? "├──" : "└──" ) << NOCOL;
+		// 		std::cout << prefix;
+		// 		std::cout << (isLeft ? "├──" : "└──" );
 		// 		if (n->color == M_RED)
-		// 			std::cout << RDCOL << n->content.first << NOCOL << std::endl;
+		// 			std::cout << "RED: " << n->content.first << std::endl;
 		// 		else
-		// 			std::cout << n->content.first << NOCOL << std::endl;
+		// 			std::cout << "BLACK: " << n->content.first << std::endl;
 		// 		print(prefix + (isLeft ? "│   " : "    "), n->right, true);
 		// 		print(prefix + (isLeft ? "│   " : "    "), n->left, false);
 		// 	}
 		// 	else
-		// 		std::cout << BKCOL << prefix << NOCOL << "nill" << std::endl; 
+		// 		std::cout << prefix << "nill" << std::endl; 
 		// }
+		void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
+			if (n == NULL)
+				n = _root;
+			if (n != _nill) {
+				std::cout << BKCOL << prefix << NOCOL;
+				std::cout << BKCOL << (isLeft ? "├──" : "└──" ) << NOCOL;
+				if (n->color == M_RED)
+					std::cout << RDCOL << n->content.first << NOCOL << std::endl;
+				else
+					std::cout << n->content.first << NOCOL << std::endl;
+				print(prefix + (isLeft ? "│   " : "    "), n->right, true);
+				print(prefix + (isLeft ? "│   " : "    "), n->left, false);
+			}
+			else
+				std::cout << BKCOL << prefix << NOCOL << "nill" << std::endl; 
+		}
 
 		Compare			_comp;
 		Tree_allocator	_alloc;

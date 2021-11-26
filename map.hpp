@@ -82,6 +82,7 @@ namespace ft {
 			map	&operator=(const map &other) {
 				if (this == &other)
 					return (*this);
+				// TODO clear
 				insert(other.begin(), other.end());
 				return (*this);
 			}
@@ -170,7 +171,7 @@ namespace ft {
 			size_type	erase(const Key &key) {
 				iterator	it;
 				size_type	i = 0;
-				for (; (it = find(key)) != end(); i++)
+				if ((it = find(key)) != end())
 					erase(it);
 				return (i);
 			}
@@ -183,24 +184,14 @@ namespace ft {
 			/* LOOKUP */
 
 			size_type	count(const Key &key) const {
-				size_type	i = 0;
-				for (const_iterator it = _tree.begin(); it != _tree.end(); it++)
-					if (key == it->first)
-						i++;
-				return (i);
+				return (_tree.count(value_type(key, T())));
 			};
 
 			iterator	find(const Key &key) {
-				for (iterator it = begin(); it != end(); it++)
-					if (key == it->first)
-						return (it);
-				return (end());
+				return (_tree.find(value_type(key, T())));
 			}
 			const_iterator	find(const Key &key) const {
-				for (const_iterator it = begin(); it != end(); it++)
-					if (key == it->first)
-						return (it);
-				return (end());
+				return (_tree.find(value_type(key, T())));
 			}
 
 			ft::pair<iterator, iterator>	equal_range(const Key &key) {
@@ -210,7 +201,7 @@ namespace ft {
 				return (ft::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key)));
 			}
 
-			iterator	lower_bound(const Key &key) {
+			iterator	lower_bound(const Key &key) { // TODO rework
 				for (iterator it = begin(); it != end(); it++)
 					if (!Compare()(it->first, key))
 						return (it);
@@ -223,7 +214,7 @@ namespace ft {
 				return (end());
 			}
 
-			iterator	upper_bound(const Key &key) {
+			iterator	upper_bound(const Key &key) { // TODO rework
 				for (iterator it = begin(); it != end(); it++)
 					if (Compare()(key, it->first)) 
 						return (it);

@@ -62,10 +62,11 @@ namespace   ft {
 					while (_current->right != _nill)
 						_current = _current->right;
 				}
-				else
+				else {
 					while (_current != _current->parent->right && _current->parent != _nill)
 						_current = _current->parent;
 					_current = _current->parent;
+				}
 				return (*this);
 			}
 

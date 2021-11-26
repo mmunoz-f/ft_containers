@@ -26,5 +26,12 @@ int	main (void) {
 	n = m;
 	n.print();
 
+
+	std::cout << "========================" << std::endl;
+
+	m.erase(33);
+	m.print();
+	std::cout << "Count: " << m.size() << std::endl;
+
 	return (0);
 }
