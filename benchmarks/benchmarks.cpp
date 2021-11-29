@@ -91,7 +91,7 @@ void benchmark_vector()
 	std::cout << "\033[1;34m--- VECTOR BENCHMARK ⚡ ---\033[0m" << std::endl;
 	std::clock_t std;
 	std::clock_t ft;
-
+ 
 	std::vector<int> sv1;
 	ft::vector<int> v1;
 

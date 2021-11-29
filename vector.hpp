@@ -94,7 +94,7 @@ namespace ft {
 				insert(begin(), count, value);
 			}
 			template<class InputIt>
-			void	assign(typename ft::enable_if< !ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last) {
+			void	assign(typename ft::enable_if<!ft::is_integral<InputIt>::value ,InputIt>::type first, InputIt last) {
 				clear();
 				insert(begin(), first, last);
 			}

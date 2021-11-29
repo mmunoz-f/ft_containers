@@ -31,7 +31,7 @@ namespace	ft {
 
 			node	*getSuccesor(node *nill) {
 				node	*s = right;
-				while (s->left != nill)
+				while (s != nill && s->left != nill)
 					s = s->left;
 				return (s);
 			}

@@ -82,7 +82,7 @@ namespace ft {
 			map	&operator=(const map &other) {
 				if (this == &other)
 					return (*this);
-				// TODO clear
+				clear();
 				insert(other.begin(), other.end());
 				return (*this);
 			}
@@ -140,7 +140,8 @@ namespace ft {
 			/* MODIFIERS */
 
 			void	clear() {
-			} // TODO needs check on deleteNode
+				erase(begin(), end());
+			}
 
 			ft::pair<iterator, bool>	insert(const value_type &value) {
 				iterator	it;
@@ -165,19 +166,23 @@ namespace ft {
 				_tree.deleteNode(pos.base());
 			}
 			void	erase(iterator first, iterator last) {
-				for (;first != last; first++)
+				iterator	next = first;
+				next++;
+				for (;first != last; next++) {
 					erase(first);
+					first = next;
+				}
 			}
 			size_type	erase(const Key &key) {
 				iterator	it;
 				size_type	i = 0;
-				if ((it = find(key)) != end())
+				for (; (it = find(key)) != end(); i++)
 					erase(it);
 				return (i);
 			}
 
 			void	swap(map &other) {
-				ft::swap(*this, other);
+				ft::swap(_tree, other._tree);
 			}
 			/* --------- */
 

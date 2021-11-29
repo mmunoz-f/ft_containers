@@ -122,16 +122,6 @@ namespace ft {
 			}
 		}
 
-		NodePtr	replaceNill(NodePtr n) {
-			NodePtr x;
-			x = (n->left == _nill ? n->right : n->left);
-			if (n->parent->left == n)
-				n->parent->left = x;
-			else
-				n->parent->right = x;
-			return (x);
-		}
-
 		bool	deleteCase0(NodePtr &x) {
 			x->color = M_BLACK;
 			return (false);
@@ -192,7 +182,7 @@ namespace ft {
 			return (false);
 		}
 
-		bool	reColorDelete(NodePtr &x, NodePtr &w) {
+		bool	fixDelete(NodePtr &x, NodePtr &w) {
 			if (x->color == M_RED)
 				return (deleteCase0(x));
 			if (x->color == M_BLACK && w->color == M_RED)
@@ -230,7 +220,8 @@ namespace ft {
 		/* DESTRUCTOR */
 
 		~tree() {
-			// TODO delete _nill;
+			_alloc.destroy(_nill);
+			_alloc.deallocate(_nill, 1);
 		}
 		/* --------- */
 
@@ -307,23 +298,49 @@ namespace ft {
 
 		void	deleteNode(NodePtr n) {
 			NodePtr	x;
-			std::cout << "erased content key: " << n->content.first << std::endl;
-			if (n->left == _nill || n->right == _nill)
-				x = replaceNill(n);
+			NodePtr	y;
+			NodePtr	w;
+			if (n->left == _nill || n->right == _nill) {
+				x = (n->left == _nill ? n->right : n->left);
+				if (x != _nill)
+					x->parent = n->parent;
+				y = x;
+				w = _nill;
+			}
 			else {
 				x = n->getSuccesor(_nill);
-				x == x->parent->left ? x->parent->left = _nill : x->parent->right = _nill;
+				y = x->right;
+				w = x->left;
+				if (y != _nill)
+					y->parent = x->parent;
+				if (x == x->parent->left) {
+					x->parent->left = y;
+					w = x->parent->right;
+				}
+				else {
+					x->parent->right = y;
+					w = x->parent->left;
+				}
+				x->parent = n->parent;
+				x->left = n->left;
+				x->left->parent = x;
+				x->right = n->right;
+				x->right->parent = x;
 			}
-			if (n->color == M_RED && (x == _nill || x->color == M_RED))
-				return ;
-			else if (n->color == M_RED && x->color == M_BLACK)
+			n == n->parent->left ? n->parent->left = x : n->parent->right = x;
+			if (n->color == M_RED && (x == _nill || x->color == M_RED));
+			else if (n->color == M_RED && x->color == M_BLACK) {
 				x->color = M_RED;
-			else if (x->color == M_RED) {
-				x->color = M_BLACK;
-				return ;
+				while (fixDelete(y, w));
 			}
-			NodePtr w = x->getSibling();
-			while (reColorDelete(x, w));
+			else if (n->color == M_BLACK && x->color == M_RED)
+				x->color = M_BLACK;
+			else if (n->color == M_BLACK && (x == _nill || x->color == M_BLACK))
+				while (fixDelete(y, w));
+			if (n == _root)
+				_root = x;
+			_alloc.destroy(n);
+			_alloc.deallocate(n, 1);
 			resetCore();
 			_size--;
 		}
@@ -369,6 +386,12 @@ namespace ft {
 			return (end());
 		}
 
+		void	swap(tree &other) {
+			ft::swap(_nill, other._nill);
+			ft::swap(_root, other._root);
+			ft::swap(_size, other._size);
+		}
+
 		/* --------- */
 		// void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
 		// 	if (n == NULL)
@@ -412,7 +435,14 @@ namespace ft {
 		size_type		_size;
 
 		template<class, class, class, class> friend class map;
+		template<class U, class Comp, class Alloc>	
+		friend void	swap(ft::tree<U, Comp, Alloc> lhs, ft::tree<U, Comp, Alloc> rhs);
 	};
+
+	template<class T, class Compare, class Allocator>
+	void	swap(ft::tree<T, Compare, Allocator> lhs, ft::tree<T, Compare, Allocator> rhs) {
+		lhs.swap(rhs);
+	}
 }
 
 #endif
