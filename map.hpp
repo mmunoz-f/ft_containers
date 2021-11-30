@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/21 20:04:48 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/30 20:14:34 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include <stddef.h>
 # include <functional>
 # include <memory>
+# include "utils/utils.hpp"
 # include "utils/pair.hpp"
-# include "utils/reverse_iterator.hpp"
 # include "utils/red_black_tree.hpp"
 
 namespace ft {
@@ -25,19 +25,20 @@ namespace ft {
 	template<class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class	map {
 
+			
 		public:
-			typedef Key										key_type;
-			typedef T										mapped_type;
-			typedef ft::pair<const Key, T>					value_type;
-			typedef std::size_t								size_type;
-			typedef std::ptrdiff_t							difference_type;
-			typedef Compare									key_compare;
+			typedef Key												key_type;
+			typedef T												mapped_type;
+			typedef ft::pair<const Key, T>							value_type;
+			typedef std::size_t										size_type;
+			typedef std::ptrdiff_t									difference_type;
+			typedef Compare											key_compare;
 
-			typedef Allocator								allocator_type;
-			typedef typename Allocator::reference			reference;
-			typedef typename Allocator::const_reference		const_reference;
-			typedef typename Allocator::pointer				pointer;
-			typedef typename Allocator::const_pointer		const_pointer;
+			typedef Allocator										allocator_type;
+			typedef typename Allocator::reference					reference;
+			typedef typename Allocator::const_reference				const_reference;
+			typedef typename Allocator::pointer						pointer;
+			typedef typename Allocator::const_pointer				const_pointer;
 
 			class	value_compare {
 				protected:
@@ -52,7 +53,10 @@ namespace ft {
 					bool	operator()(const value_type &lhs, const value_type &rhs) const { return (comp(lhs.first, rhs.first)); }
 			};
 
+		private:
 			typedef ft::tree<value_type, value_compare, Allocator>	Tree;
+
+		public:
 			typedef typename Tree::iterator							iterator;
 			typedef typename Tree::const_iterator					const_iterator;
 			typedef typename Tree::reverse_iterator					reverse_iterator;
@@ -182,7 +186,7 @@ namespace ft {
 			}
 
 			void	swap(map &other) {
-				ft::swap(_tree, other._tree);
+				_tree.swap(other._tree);
 			}
 			/* --------- */
 
@@ -206,17 +210,11 @@ namespace ft {
 				return (ft::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key)));
 			}
 
-			iterator	lower_bound(const Key &key) { // TODO rework
-				for (iterator it = begin(); it != end(); it++)
-					if (!Compare()(it->first, key))
-						return (it);
-				return (end());
+			iterator	lower_bound(const Key &key) {
+				return (_tree.lower_bound(value_type(key, T())));
 			}
 			const_iterator	lower_bound(const Key &key) const {
-				for (const_iterator it = begin(); it != end(); it++)
-					if (!Compare()(it->first, key))
-						return (it);
-				return (end());
+				return (_tree.lower_bound(value_type(key, T())));
 			}
 
 			iterator	upper_bound(const Key &key) { // TODO rework
@@ -240,7 +238,7 @@ namespace ft {
 			value_compare	value_comp() const { return (value_compare(Compare())); }
 			/* --------- */
 
-			void	print() const { _tree.print(); } // TODO tmp
+			void	print() const { _tree.print(); }
 
 		private:
 			Tree	_tree;
@@ -269,7 +267,7 @@ namespace ft {
 	bool	operator>=(ft::map<Key, T, Compare, Allocator> lhs, ft::map<Key, T, Compare, Allocator> rhs) { return !(lhs < rhs); }
 
 	template<class Key, class T, class Compare, class Allocator>
-	void	swap(ft::map<Key, T, Compare, Allocator> lhs, ft::map<Key, T, Compare, Allocator> rhs) {
+	void	swap(ft::map<Key, T, Compare, Allocator> &lhs, ft::map<Key, T, Compare, Allocator> &rhs) {
 		lhs.swap(rhs);
 	}
 }

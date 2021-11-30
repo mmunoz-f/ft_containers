@@ -230,7 +230,7 @@ namespace ft {
 	bool	operator==(const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs) {
 		typename vector<T, Alloc>::const_iterator first1 = lhs.begin();
 		typename vector<T, Alloc>::const_iterator first2 = rhs.begin();
-		for (; *first1 == *first2 && first1 != lhs.end() && first2 != rhs.end(); first1++, first2++);
+		for (;first1 != lhs.end() && first2 != rhs.end() && *first1 == *first2; first1++, first2++);
 		return (first1 == lhs.end() && first2 == rhs.end());
 	}
 	template< class T, class Alloc >

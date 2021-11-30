@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:32:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/16 17:16:20 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/11/30 20:11:26 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ namespace ft {
 
 	/* enable_if redefinition */
 
-	template<bool B, class T>
+	template<bool B, class T = void>
 	struct	enable_if;
 
 	template<class T>
@@ -142,7 +142,6 @@ namespace ft {
 	template<class T>
 	void	swap(T& a, T &b) {
 		T	tmp;
-
 		tmp = a;
 		a = b;
 		b = tmp;

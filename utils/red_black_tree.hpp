@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/21 20:00:57 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/01 00:24:37 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include "utils.hpp"
 # include "node.hpp"
 # include "tree_iterator.hpp"
+# include "reverse_iterator.hpp"
 
 # define M_BLACK	0
 # define M_RED		1
@@ -221,7 +222,7 @@ namespace ft {
 
 		~tree() {
 			_alloc.destroy(_nill);
-			_alloc.deallocate(_nill, 1);
+			// _alloc.deallocate(_nill, 1);
 		}
 		/* --------- */
 
@@ -392,24 +393,58 @@ namespace ft {
 			ft::swap(_size, other._size);
 		}
 
-		/* --------- */
-		// void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
-		// 	if (n == NULL)
-		// 		n = _root;
-		// 	std::cout << n->parent->content.first << std::endl;
-		// 	if (n != _nill) {
-		// 		std::cout << prefix;
-		// 		std::cout << (isLeft ? "├──" : "└──" );
-		// 		if (n->color == M_RED)
-		// 			std::cout << "RED: " << n->content.first << std::endl;
-		// 		else
-		// 			std::cout << "BLACK: " << n->content.first << std::endl;
-		// 		print(prefix + (isLeft ? "│   " : "    "), n->right, true);
-		// 		print(prefix + (isLeft ? "│   " : "    "), n->left, false);
-		// 	}
-		// 	else
-		// 		std::cout << prefix << "nill" << std::endl; 
+		iterator		lower_bound(const value_type &value) {
+			iterator	it(_root, _nill);
+			while (it != end()) {
+				if (_comp(value, *it))
+					--it;
+				else {
+					iterator	aux(it);
+					aux--;
+					if (aux == end())
+						return it;
+					else if (_comp(value, *(aux++)))
+						--it;
+					else if (++aux == end())
+						return end();
+					else if (_comp(value, *(aux)))
+						return it;
+					else
+						++it;
+				}
+			}
+			return it;
+		}
+		const_iterator	lower_bound(const value_type &value) const {
+			const_iterator	it(_root, _nill);
+			while (it != end()) {
+				if (_comp(value, *it))
+					--it;
+				else {
+					const_iterator	aux(it);
+					aux--;
+					if (aux == end())
+						return it;
+					else if (_comp(value, *(aux++)))
+						--it;
+					else if (++aux == end())
+						return it;
+					else if (_comp(value, *(aux)))
+						return it;
+					else
+						++it;
+				}
+			}
+			return it;
+		}
+
+		// iterator		upper_bound(const value_type &value) {
+
 		// }
+		// const_iterator	upper_bound(const value_type &value) const {
+
+		// }
+
 		void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
 			if (n == NULL)
 				n = _root;
@@ -435,12 +470,13 @@ namespace ft {
 		size_type		_size;
 
 		template<class, class, class, class> friend class map;
+		template<class, class, class> friend class set;
 		template<class U, class Comp, class Alloc>	
 		friend void	swap(ft::tree<U, Comp, Alloc> lhs, ft::tree<U, Comp, Alloc> rhs);
 	};
 
 	template<class T, class Compare, class Allocator>
-	void	swap(ft::tree<T, Compare, Allocator> lhs, ft::tree<T, Compare, Allocator> rhs) {
+	void	swap(ft::tree<T, Compare, Allocator> &lhs, ft::tree<T, Compare, Allocator> &rhs) {
 		lhs.swap(rhs);
 	}
 }

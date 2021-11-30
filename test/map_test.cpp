@@ -1,20 +1,35 @@
 #include "../map.hpp"
 #include <map>
 
+using namespace std;
+
 int	main (void) {
 	ft::map<int, int>	m;
+	ft::map<int, int>	n;
 
 	m.insert(ft::make_pair(5,3));
 	m.insert(ft::make_pair(2,3));
+	m.insert(ft::make_pair(2,3));
+	m.insert(ft::make_pair(2,3));
+	m.insert(ft::make_pair(8,3));
+	n.insert(ft::make_pair(3,3));
+	n.insert(ft::make_pair(6,3));
+	
+	m.erase(8);
 
 	m.print();
-	std::cout << "Count: " << m.size() << std::endl;
+	n.print();
 
-	std::cout << "========================" << std::endl;
+	std::cout << "====================" << std::endl;
 
-	m.erase(m.begin(), m.end());
+	ft::swap(m, n);
+
 	m.print();
-	std::cout << "Count: " << m.size() << std::endl;
+	n.print();
+
+	std::cout << std::endl;
+
+	system("leaks a.out");
 
 	return (0);
 }
