@@ -217,17 +217,11 @@ namespace ft {
 				return (_tree.lower_bound(value_type(key, T())));
 			}
 
-			iterator	upper_bound(const Key &key) { // TODO rework
-				for (iterator it = begin(); it != end(); it++)
-					if (Compare()(key, it->first)) 
-						return (it);
-				return (end());
+			iterator	upper_bound(const Key &key) {
+				return (_tree.upper_bound(value_type(key, T())));
 			}
 			const_iterator	upper_bound(const Key &key) const {
-				for (const_iterator it = begin(); it != end(); it++)
-					if (Compare()(key, it->first)) 
-						return (it);
-				return (end());
+				return (_tree.upper_bound(value_type(key, T())));
 			}
 			/* --------- */
 

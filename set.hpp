@@ -91,7 +91,7 @@ namespace   ft {
 			size_type	max_size() const { return (_tree.max_size()); }
 
 			void	clear() {
-				
+				erase(begin(), end());
 			}
 
 			ft::pair<iterator, bool>	insert(const value_type &value) {
@@ -161,6 +161,13 @@ namespace   ft {
 				return (_tree.lower_bound(key));
 			}
 
+			iterator	upper_bound(const Key &key) {
+				return (_tree.upper_bound(key));
+			}
+			const_iterator	upper_bound(const Key &key) const {
+				return (_tree.upper_bound(key));
+			}
+
 			key_compare	key_comp() const { return (Compare()); }
 
 			value_compare	value_comp() const { return (value_compare(Compare())); }
@@ -169,7 +176,7 @@ namespace   ft {
 			Tree	_tree;
 	};
 
-	template<class Key, class T, class Compare, class Allocator>
+	template<class T, class Compare, class Allocator>
 	bool	operator==(ft::set<T, Compare, Allocator> lhs, ft::set<T, Compare, Allocator> rhs) {
 		typename ft::set<T, Compare, Allocator>::const_iterator	first1 = lhs.begin();
 		typename ft::set<T, Compare, Allocator>::const_iterator	first2 = rhs.begin();
@@ -178,20 +185,20 @@ namespace   ft {
 				return (false);
 		return (first1 == lhs.end() && first2 == rhs.end());
 	}
-	template<class Key, class T, class Compare, class Allocator>
+	template<class T, class Compare, class Allocator>
 	bool	operator!=(ft::set<T, Compare, Allocator> lhs, ft::set<T, Compare, Allocator> rhs) { return !(lhs == rhs); }
-	template<class Key, class T, class Compare, class Allocator>
+	template<class T, class Compare, class Allocator>
 	bool	operator<(ft::set<T, Compare, Allocator> lhs, ft::set<T, Compare, Allocator> rhs) {
 		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 	}
-	template<class Key, class T, class Compare, class Allocator>
+	template<class T, class Compare, class Allocator>
 	bool	operator<=(ft::set<T, Compare, Allocator> lhs, ft::set<T, Compare, Allocator> rhs) { return !(rhs < lhs); }
-	template<class Key, class T, class Compare, class Allocator>
+	template<class T, class Compare, class Allocator>
 	bool	operator>(ft::set<T, Compare, Allocator> lhs, ft::set<T, Compare, Allocator> rhs) { return (rhs < lhs); }
-	template<class Key, class T, class Compare, class Allocator>
+	template<class T, class Compare, class Allocator>
 	bool	operator>=(ft::set<T, Compare, Allocator> lhs, ft::set<T, Compare, Allocator> rhs) { return !(lhs < rhs); }
 
-	template<class Key, class T, class Compare, class Allocator>
+	template<class T, class Compare, class Allocator>
 	void	swap(ft::set<T, Compare, Allocator> &lhs, ft::set<T, Compare, Allocator> &rhs) {
 		lhs.swap(rhs);
 	}

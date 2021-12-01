@@ -396,54 +396,60 @@ namespace ft {
 		iterator		lower_bound(const value_type &value) {
 			iterator	it(_root, _nill);
 			while (it != end()) {
-				if (_comp(value, *it))
-					--it;
+				if (_comp(*it, value))
+					it++;
 				else {
 					iterator	aux(it);
-					aux--;
-					if (aux == end())
-						return it;
-					else if (_comp(value, *(aux++)))
-						--it;
-					else if (++aux == end())
-						return end();
-					else if (_comp(value, *(aux)))
-						return it;
-					else
-						++it;
+					if (--aux == end() || _comp(*(aux++), value))
+						return (it);
+					it--;
 				}
 			}
-			return it;
+			return (it);
 		}
 		const_iterator	lower_bound(const value_type &value) const {
 			const_iterator	it(_root, _nill);
 			while (it != end()) {
-				if (_comp(value, *it))
-					--it;
+				if (_comp(*it, value))
+					it++;
 				else {
 					const_iterator	aux(it);
-					aux--;
-					if (aux == end())
-						return it;
-					else if (_comp(value, *(aux++)))
-						--it;
-					else if (++aux == end())
-						return it;
-					else if (_comp(value, *(aux)))
-						return it;
-					else
-						++it;
+					if (--aux == end() || _comp(*(aux++), value))
+						return (it);
+					it--;
 				}
 			}
-			return it;
+			return (it);
 		}
 
-		// iterator		upper_bound(const value_type &value) {
-
-		// }
-		// const_iterator	upper_bound(const value_type &value) const {
-
-		// }
+		iterator		upper_bound(const value_type &value) {
+			iterator	it(_root, _nill);
+			while (it != end()) {
+				if (!_comp(value, *it))
+					it++;
+				else {
+					iterator	aux(it);
+					if (--aux == end() || !_comp(value, *(aux++)))
+						return (it);
+					it--;
+				}
+			}
+			return (it);
+		}
+		const_iterator	upper_bound(const value_type &value) const {
+			const_iterator	it(_root, _nill);
+			while (it != end()) {
+				if (!_comp(value, *it))
+					it++;
+				else {
+					const_iterator	aux(it);
+					if (--aux == end() || !_comp(value, *(aux++)))
+						return (it);
+					it--;
+				}
+			}
+			return (it);
+		}
 
 		void print(const std::string& prefix = std::string(), const_NodePtr n = NULL, bool isLeft = false) const {
 			if (n == NULL)

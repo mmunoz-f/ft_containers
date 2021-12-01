@@ -14,9 +14,9 @@ namespace   ft {
 			typedef typename ft::iterator_traits<Node>::pointer			nodePtr;
 			typedef typename ft::iterator_traits<Node>::reference		nodeRef;
 
-			typedef typename ft::node_traits<Node>::value_type			value_type;
-			typedef typename ft::node_traits<Node>::reference			reference;
-			typedef typename ft::node_traits<Node>::pointer				pointer;
+			typedef typename ft::node_traits<nodePtr>::value_type		value_type;
+			typedef typename ft::node_traits<nodePtr>::reference		reference;
+			typedef typename ft::node_traits<nodePtr>::pointer			pointer;
 
 			/* CONSTRUCTOR */
 
