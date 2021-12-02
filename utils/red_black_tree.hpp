@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/12/02 22:14:51 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/03 00:01:54 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,6 @@ namespace ft {
 				x->color = M_BLACK;
 				return (false);
 			}
-			w = x->getSibling();
 			return (true);
 		}
 
@@ -158,14 +157,13 @@ namespace ft {
 				w->left->color = M_BLACK;
 				w->color = M_RED;
 				rightRotate(w);
-				w = x->parent->right;
 			}
 			else {
 				w->right->color = M_BLACK;
 				w->color = M_RED;
 				leftRotate(w);
-				w = x->parent->left;
 			}
+			w = (x == x->parent->left ? x->parent->right : x->parent->left);
 			return (deleteCase4(x, w));
 		}
 
@@ -192,10 +190,10 @@ namespace ft {
 				return (deleteCase2(x, w));
 			if (x->color == M_BLACK && w->color == M_BLACK && ((x->parent->left == x && w->left->color == M_RED && w->right->color == M_BLACK)
 					|| (x->parent->right == x && w->right->color == M_RED && w->left->color == M_BLACK))) {
-				deleteCase3(x, w);
-				return (deleteCase4(x, w));
+				return (deleteCase3(x, w));
 			}
-			if (x->color == M_BLACK && w->color == M_BLACK && ((x->parent->left == x && w->right->color == M_RED) || (x->parent->right == x && w->left->color == M_RED)))
+			if (x->color == M_BLACK && w->color == M_BLACK && ((x->parent->left == x && w->right->color == M_RED)
+				|| (x->parent->right == x && w->left->color == M_RED)))
 				return (deleteCase4(x, w));			
 			return (true);
 		}
@@ -222,7 +220,7 @@ namespace ft {
 
 		~tree() {
 			_alloc.destroy(_nill);
-			// _alloc.deallocate(_nill, 1);
+			_alloc.deallocate(_nill, 1);
 		}
 		/* --------- */
 
@@ -304,35 +302,93 @@ namespace ft {
 			replacement->parent = deleted->parent;
 		}
 
+		// new
+
+		// void	deleteNode(NodePtr n) {
+		// 	NodePtr	replacement;
+		// 	NodePtr	x;
+		// 	if (n->left == _nill || n->right == _nill) {
+		// 		replacement = (n->left == _nill ? n->right : n->left);
+		// 		replaceNode(n, replacement);	
+		// 	}
+		// 	else {
+		// 		replacement = n->getSuccesor(_nill);
+		// 		x = replacement->right;
+		// 		if (replacement->parent == n)
+		// 			x->parent = replacement;
+		// 		else {
+		// 			replaceNode(replacement, x);
+		// 			replacement->right = n->right;
+		// 			replacement->right->parent = replacement;
+		// 		}
+		// 		replaceNode(n, replacement);
+		// 		replacement->left = n->left;
+		// 		replacement->left->parent = replacement;;
+		// 	}
+		// 	if (n->color == M_RED && (replacement == _nill || replacement->color == M_RED));
+		// 	else if (n->color == M_RED && replacement->color == M_BLACK) {
+		// 		replacement->color = M_RED;
+		// 		fixRemove(x);
+		// 	}
+		// 	else if (n->color == M_BLACK && replacement->color == M_RED)
+		// 		replacement->color = M_BLACK;
+		// 	else if (n->color == M_BLACK && (replacement == _nill || replacement->color == M_BLACK))
+		// 		fixRemove(x);
+		// 	_alloc.destroy(n);
+		// 	_alloc.deallocate(n, 1);
+		// 	resetCore();
+		// 	_size--;
+		// }
+
 		void	deleteNode(NodePtr n) {
-			NodePtr	replacement;
 			NodePtr	x;
+			NodePtr	y;
+			NodePtr	w;
 			if (n->left == _nill || n->right == _nill) {
-				replacement = (n->left == _nill ? n->right : n->left);
-				replaceNode(n, replacement);	
+				x = (n->left == _nill ? n->right : n->left);
+				if (x != _nill)
+					x->parent = n->parent;
+				y = x;
+				w = _nill;
 			}
 			else {
-				replacement = n->getSuccesor(_nill);
-				x = replacement->right;
-				replaceNode(replacement, x);
-				replaceNode(n, replacement);
-				replacement->left = n->left;
-				replacement->left->parent = replacement;;
+				x = n->getSuccesor(_nill);
+				y = x->right;
+				w = x->left;
+				if (y != _nill)
+					y->parent = x->parent;
+				if (x == x->parent->left) {
+					x->parent->left = y;
+					w = x->parent->right;
+				}
+				else {
+					x->parent->right = y;
+					w = x->parent->left;
+				}
+				x->parent = n->parent;
+				x->left = n->left;
+				x->left->parent = x;
+				x->right = n->right;
+				x->right->parent = x;
 			}
-			if (n->color == M_RED && (replacement == _nill || replacement->color == M_RED));
-			else if (n->color == M_RED && replacement->color == M_BLACK) {
-				replacement->color = M_RED;
-				while (fixDelete(x, x->getSibling()));
+			n == n->parent->left ? n->parent->left = x : n->parent->right = x;
+			if (n == _root)
+				_root = x;
+			if (n->color == M_RED && (x == _nill || x->color == M_RED));
+			else if (n->color == M_RED && x->color == M_BLACK) {
+				x->color = M_RED;
+				while (fixDelete(y, w));
 			}
-			else if (n->color == M_BLACK && replacement->color == M_RED)
-				replacement->color = M_BLACK;
-			else if (n->color == M_BLACK && (replacement == _nill || replacement->color == M_BLACK))
-				while (fixDelete(x, x->getSibling()));
+			else if (n->color == M_BLACK && x->color == M_RED)
+				x->color = M_BLACK;
+			else if (n->color == M_BLACK && (x == _nill || x->color == M_BLACK))
+				while (fixDelete(y, w));
 			_alloc.destroy(n);
 			_alloc.deallocate(n, 1);
 			resetCore();
 			_size--;
 		}
+
 		/* --------- */
 
 		/* LOOKUP */
