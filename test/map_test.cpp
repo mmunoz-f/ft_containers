@@ -1,35 +1,33 @@
-#include "../map.hpp"
+#include "../set.hpp"
 #include <map>
+#include <list>
 
 using namespace std;
 
 int	main (void) {
-	ft::map<int, int>	m;
-	ft::map<int, int>	n;
+	ft::set<int>	n;
 
-	m.insert(ft::make_pair(5,3));
-	m.insert(ft::make_pair(2,3));
-	m.insert(ft::make_pair(2,3));
-	m.insert(ft::make_pair(2,3));
-	m.insert(ft::make_pair(8,3));
-	n.insert(ft::make_pair(3,3));
-	n.insert(ft::make_pair(6,3));
+	std::list<int> lst;
+	unsigned int lst_size = 7;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(lst_size - i);
+
+	ft::set<int>	m(lst.begin(), lst.end());
 	
-	m.erase(8);
 
 	m.print();
-	n.print();
 
 	std::cout << "====================" << std::endl;
 
-	ft::swap(m, n);
-
+	m.erase(1);
+	m.erase(2);
+	m.erase(4);
+	m.erase(5);
+	m.erase(3);
 	m.print();
-	n.print();
 
 	std::cout << std::endl;
 
-	system("leaks a.out");
 
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:32:28 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/30 20:00:33 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/02 17:33:51 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ namespace   ft {
 	class set {
 		public:
 			typedef	Key											key_value;
-			typedef Key											value_type;
+			typedef const Key									value_type;
 
 			typedef std::size_t									size_type;
 			typedef std::ptrdiff_t								difference_type;
@@ -66,6 +66,7 @@ namespace   ft {
 				if (this == &other)
 					return (*this);
 				clear();
+				_tree._root = _tree._nill;
 				insert(other.begin(), other.end());
 				return (*this);
 			}
@@ -117,12 +118,8 @@ namespace   ft {
 				_tree.deleteNode(pos.base());
 			}
 			void	erase(iterator first, iterator last) {
-				iterator	next = first;
-				next++;
-				for (;first != last; next++) {
-					erase(first);
-					first = next;
-				}
+				for (;first != last;)
+					erase(first++);
 			}
 			size_type	erase(const Key &key) {
 				iterator	it;
@@ -171,6 +168,8 @@ namespace   ft {
 			key_compare	key_comp() const { return (Compare()); }
 
 			value_compare	value_comp() const { return (value_compare(Compare())); }
+
+			void	print() const { _tree.print(); } //TODO
 
 		private:
 			Tree	_tree;

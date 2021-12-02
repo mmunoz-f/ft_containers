@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/12/01 00:24:37 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/02 22:14:51 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,49 +297,37 @@ namespace ft {
 
 		/* DELETE */
 
+		void	replaceNode(NodePtr deleted, NodePtr replacement) {
+			if (deleted == _root)
+				_root = replacement;
+			(deleted == deleted->parent->left ? deleted->parent->left : deleted->parent->right) = replacement;
+			replacement->parent = deleted->parent;
+		}
+
 		void	deleteNode(NodePtr n) {
+			NodePtr	replacement;
 			NodePtr	x;
-			NodePtr	y;
-			NodePtr	w;
 			if (n->left == _nill || n->right == _nill) {
-				x = (n->left == _nill ? n->right : n->left);
-				if (x != _nill)
-					x->parent = n->parent;
-				y = x;
-				w = _nill;
+				replacement = (n->left == _nill ? n->right : n->left);
+				replaceNode(n, replacement);	
 			}
 			else {
-				x = n->getSuccesor(_nill);
-				y = x->right;
-				w = x->left;
-				if (y != _nill)
-					y->parent = x->parent;
-				if (x == x->parent->left) {
-					x->parent->left = y;
-					w = x->parent->right;
-				}
-				else {
-					x->parent->right = y;
-					w = x->parent->left;
-				}
-				x->parent = n->parent;
-				x->left = n->left;
-				x->left->parent = x;
-				x->right = n->right;
-				x->right->parent = x;
+				replacement = n->getSuccesor(_nill);
+				x = replacement->right;
+				replaceNode(replacement, x);
+				replaceNode(n, replacement);
+				replacement->left = n->left;
+				replacement->left->parent = replacement;;
 			}
-			n == n->parent->left ? n->parent->left = x : n->parent->right = x;
-			if (n->color == M_RED && (x == _nill || x->color == M_RED));
-			else if (n->color == M_RED && x->color == M_BLACK) {
-				x->color = M_RED;
-				while (fixDelete(y, w));
+			if (n->color == M_RED && (replacement == _nill || replacement->color == M_RED));
+			else if (n->color == M_RED && replacement->color == M_BLACK) {
+				replacement->color = M_RED;
+				while (fixDelete(x, x->getSibling()));
 			}
-			else if (n->color == M_BLACK && x->color == M_RED)
-				x->color = M_BLACK;
-			else if (n->color == M_BLACK && (x == _nill || x->color == M_BLACK))
-				while (fixDelete(y, w));
-			if (n == _root)
-				_root = x;
+			else if (n->color == M_BLACK && replacement->color == M_RED)
+				replacement->color = M_BLACK;
+			else if (n->color == M_BLACK && (replacement == _nill || replacement->color == M_BLACK))
+				while (fixDelete(x, x->getSibling()));
 			_alloc.destroy(n);
 			_alloc.deallocate(n, 1);
 			resetCore();
@@ -458,9 +446,9 @@ namespace ft {
 				std::cout << BKCOL << prefix << NOCOL;
 				std::cout << BKCOL << (isLeft ? "├──" : "└──" ) << NOCOL;
 				if (n->color == M_RED)
-					std::cout << RDCOL << n->content.first << NOCOL << std::endl;
+					std::cout << RDCOL << n->content << NOCOL << std::endl;
 				else
-					std::cout << n->content.first << NOCOL << std::endl;
+					std::cout << n->content << NOCOL << std::endl;
 				print(prefix + (isLeft ? "│   " : "    "), n->right, true);
 				print(prefix + (isLeft ? "│   " : "    "), n->left, false);
 			}
@@ -488,4 +476,3 @@ namespace ft {
 }
 
 #endif
- 

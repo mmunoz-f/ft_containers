@@ -36,7 +36,7 @@ namespace	ft {
 				return (s);
 			}
 
-			node	*getSibling() {
+			node	*&getSibling() {
 				if (this == parent->right)
 					return (parent->left);
 				return (parent->right);
