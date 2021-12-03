@@ -295,51 +295,6 @@ namespace ft {
 
 		/* DELETE */
 
-		void	replaceNode(NodePtr deleted, NodePtr replacement) {
-			if (deleted == _root)
-				_root = replacement;
-			(deleted == deleted->parent->left ? deleted->parent->left : deleted->parent->right) = replacement;
-			replacement->parent = deleted->parent;
-		}
-
-		// new
-
-		// void	deleteNode(NodePtr n) {
-		// 	NodePtr	replacement;
-		// 	NodePtr	x;
-		// 	if (n->left == _nill || n->right == _nill) {
-		// 		replacement = (n->left == _nill ? n->right : n->left);
-		// 		replaceNode(n, replacement);	
-		// 	}
-		// 	else {
-		// 		replacement = n->getSuccesor(_nill);
-		// 		x = replacement->right;
-		// 		if (replacement->parent == n)
-		// 			x->parent = replacement;
-		// 		else {
-		// 			replaceNode(replacement, x);
-		// 			replacement->right = n->right;
-		// 			replacement->right->parent = replacement;
-		// 		}
-		// 		replaceNode(n, replacement);
-		// 		replacement->left = n->left;
-		// 		replacement->left->parent = replacement;;
-		// 	}
-		// 	if (n->color == M_RED && (replacement == _nill || replacement->color == M_RED));
-		// 	else if (n->color == M_RED && replacement->color == M_BLACK) {
-		// 		replacement->color = M_RED;
-		// 		fixRemove(x);
-		// 	}
-		// 	else if (n->color == M_BLACK && replacement->color == M_RED)
-		// 		replacement->color = M_BLACK;
-		// 	else if (n->color == M_BLACK && (replacement == _nill || replacement->color == M_BLACK))
-		// 		fixRemove(x);
-		// 	_alloc.destroy(n);
-		// 	_alloc.deallocate(n, 1);
-		// 	resetCore();
-		// 	_size--;
-		// }
-
 		void	deleteNode(NodePtr n) {
 			NodePtr	x;
 			NodePtr	y;
