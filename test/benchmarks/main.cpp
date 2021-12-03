@@ -7,8 +7,9 @@ int main(void)
 			  << std::endl;
 
 	benchmark_vector();
-//	benchmark_stack();
-//	benchmark_map();
-//	benchmark_set();
+	benchmark_stack();
+	benchmark_map();
+	benchmark_set();
+	
 	system("leaks a.out");
 }

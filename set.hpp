@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:32:28 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/12/03 17:46:44 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/03 20:41:14 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,11 +122,11 @@ namespace   ft {
 					erase(*(first++));
 			}
 			size_type	erase(const Key &key) {
-				iterator	it;
-				size_type	i = 0;
-				for (; (it = find(key)) != end(); i++)
+				if (find(key) != end()) {
 					_tree.deleteNode(key);
-				return (i);
+					return (1);
+				}
+				return (0);
 			}
 
 			void	swap(set &other) {
