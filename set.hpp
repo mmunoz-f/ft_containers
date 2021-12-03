@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:32:28 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/12/03 00:04:32 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/03 17:46:44 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@ namespace   ft {
 		private:
 			typedef tree<value_type, value_compare, Allocator>	Tree;
 		public:
-			typedef typename Tree::iterator						iterator;
-			typedef typename Tree::const_iterator				const_iterator;
-			typedef typename Tree::reverse_iterator				reverse_iterator;
-			typedef typename Tree::const_reverse_iterator		const_reverse_iterator;
+			typedef typename Tree::const_iterator					iterator;
+			typedef typename Tree::const_iterator					const_iterator;
+			typedef ft::reverse_iterator<iterator>					reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 
 			set() : _tree(Compare(), Allocator()) {}
 			explicit	set(const Compare &cmp, const Allocator &alloc = Allocator()) : _tree(cmp, alloc) {}
@@ -115,17 +115,17 @@ namespace   ft {
 			}
 
 			void	erase(iterator pos) {
-				_tree.deleteNode(pos.base());
+				erase(*pos);
 			}
 			void	erase(iterator first, iterator last) {
 				for (;first != last;)
-					erase(first++);
+					erase(*(first++));
 			}
 			size_type	erase(const Key &key) {
 				iterator	it;
 				size_type	i = 0;
 				for (; (it = find(key)) != end(); i++)
-					erase(it);
+					_tree.deleteNode(key);
 				return (i);
 			}
 

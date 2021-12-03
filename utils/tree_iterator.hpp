@@ -5,7 +5,7 @@
 
 namespace   ft {
     
-    template<class Node>
+    template<class Node, class T>
 	class	tree_iterator {
 		public:
 			typedef typename std::bidirectional_iterator_tag			iterator_category;
@@ -14,16 +14,16 @@ namespace   ft {
 			typedef typename ft::iterator_traits<Node>::pointer			nodePtr;
 			typedef typename ft::iterator_traits<Node>::reference		nodeRef;
 
-			typedef typename ft::node_traits<nodePtr>::value_type		value_type;
-			typedef typename ft::node_traits<nodePtr>::reference		reference;
-			typedef typename ft::node_traits<nodePtr>::pointer			pointer;
+			typedef T			value_type;
+			typedef T&			reference;
+			typedef T*			pointer;
 
 			/* CONSTRUCTOR */
 
 			tree_iterator() : _nill(), _current() {}
 			tree_iterator(nodePtr x, nodePtr nill) : _nill(nill), _current(x) {}
-			template<class U>
-			tree_iterator(const tree_iterator<U> &other) : _nill(other._nill), _current(other._current) {}
+			template<class N, class U>
+			tree_iterator(const tree_iterator<N, U> &other) : _nill(other._nill), _current(other._current) {}
 			/* --------- */
 
 			/* ASSIGN OPERATOR */
@@ -84,31 +84,31 @@ namespace   ft {
 			nodePtr	_nill;
 			nodePtr	_current;
 
-			nodePtr	base() {return (_current); };
+			nodePtr	base() const {return (_current); };
 
-		template<class> friend class tree_iterator;
+		template<class, class> friend class tree_iterator;
 		template<class, class, class> friend class tree;
 		template<class, class, class, class> friend class map;
 		template<class, class, class> friend class set;
 
-		template<class T, class U>
-		friend bool	operator==(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2);
-		template<class T, class U>
-		friend bool	operator<(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2);
+		template<class N1, class U, class N2, class V>
+		friend bool	operator==(const tree_iterator<N1, U> &Iter1, const tree_iterator<N2, V> &Iter2);
+		template<class N1, class U, class N2, class V>
+		friend bool	operator<(const tree_iterator<N1, U> &Iter1, const tree_iterator<N2, V> &Iter2);
 	};
 
-	template<class T, class U>
-	bool	operator==(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2) { return (Iter1._current == Iter2._current); }
-	template<class T, class U>
-	bool	operator!=(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2) { return !(Iter1 == Iter2); }
-	template<class T, class U>
-	bool	operator<(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2) { return (Iter1._current > Iter2._current); }
-	template<class T, class U>
-	bool	operator<=(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2) { return !(Iter2 < Iter1); }
-	template<class T, class U>
-	bool	operator>(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2) { return (Iter2 < Iter1); }
-	template<class T, class U>
-	bool	operator>=(const tree_iterator<T> &Iter1, const tree_iterator<U> &Iter2) { return !(Iter1 < Iter2); }
+	template<class N1, class T, class N2, class U>
+	bool	operator==(const tree_iterator<N1, T> &Iter1, const tree_iterator<N2, U> &Iter2) { return (Iter1._current == Iter2._current); }
+	template<class N1, class T, class N2, class U>
+	bool	operator!=(const tree_iterator<N1, T> &Iter1, const tree_iterator<N2, U> &Iter2) { return !(Iter1 == Iter2); }
+	template<class N1, class T, class N2, class U>
+	bool	operator<(const tree_iterator<N1, T> &Iter1, const tree_iterator<N2, U> &Iter2) { return (Iter1._current > Iter2._current); }
+	template<class N1, class T, class N2, class U>
+	bool	operator<=(const tree_iterator<N1, T> &Iter1, const tree_iterator<N2, U> &Iter2) { return !(Iter2 < Iter1); }
+	template<class N1, class T, class N2, class U>
+	bool	operator>(const tree_iterator<N1, T> &Iter1, const tree_iterator<N2, U> &Iter2) { return (Iter2 < Iter1); }
+	template<class N1, class T, class N2, class U>
+	bool	operator>=(const tree_iterator<N1, T> &Iter1, const tree_iterator<N2, U> &Iter2) { return !(Iter1 < Iter2); }
 }
 
 #endif

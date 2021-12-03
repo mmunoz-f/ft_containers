@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/12/03 00:01:54 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/03 18:35:49 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ namespace ft {
 		typedef typename Tree_allocator::pointer					NodePtr;
 		typedef typename Tree_allocator::const_pointer				const_NodePtr;
 
-		typedef ft::tree_iterator<NodePtr>							iterator;
-		typedef ft::tree_iterator<const_NodePtr>					const_iterator;
+		typedef ft::tree_iterator<NodePtr, value_type>				iterator;
+		typedef ft::tree_iterator<const_NodePtr, const value_type>	const_iterator;
 		typedef ft::reverse_iterator<iterator>						reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 
@@ -295,10 +295,65 @@ namespace ft {
 
 		/* DELETE */
 
-		void	deleteNode(NodePtr n) {
+		// void	replaceNode(NodePtr deleted, NodePtr replacement) {
+		// 	if (deleted == _root)
+		// 		_root = replacement;
+		// 	(deleted == deleted->parent->left ? deleted->parent->left : deleted->parent->right) = replacement;
+		// 	replacement->parent = deleted->parent;
+		// }
+
+		// void	deleteNode(const value_type &key) {
+		// 	NodePtr		n;
+		// 	iterator	it;
+		// 	if ((it = find(key)) == end())
+		// 		return;
+		// 	n = it.base();
+		// 	NodePtr	replacement;
+		// 	NodePtr	x;
+		// 	if (n->left == _nill || n->right == _nill) {
+		// 		replacement = (n->left == _nill ? n->right : n->left);
+		// 		replaceNode(n, replacement);	
+		// 	}
+		// 	else {
+		// 		replacement = n->getSuccesor(_nill);
+		// 		x = replacement->right;
+		// 		if (replacement->parent == n)
+		// 			x->parent = replacement;
+		// 		else {
+		// 			replaceNode(replacement, x);
+		// 			replacement->right = n->right;
+		// 			replacement->right->parent = replacement;
+		// 		}
+		// 		replaceNode(n, replacement);
+		// 		replacement->left = n->left;
+		// 		replacement->left->parent = replacement;;
+		// 	}
+		// 	if (n->color == M_RED && (replacement == _nill || replacement->color == M_RED));
+		// 	else if (n->color == M_RED && replacement->color == M_BLACK) {
+		// 		replacement->color = M_RED;
+		// 		while (fixDelete(x, x->getSibling()));
+		// 	}
+		// 	else if (n->color == M_BLACK && replacement->color == M_RED)
+		// 		replacement->color = M_BLACK;
+		// 	else if (n->color == M_BLACK && (replacement == _nill || replacement->color == M_BLACK))
+		// 		while (fixDelete(x, x->getSibling()));
+		// 	_alloc.destroy(n);
+		// 	_alloc.deallocate(n, 1);
+		// 	resetCore();
+		// 	_size--;
+		// }
+
+		void	deleteNode(const value_type &key) {
+			NodePtr		n;
+			iterator	it;
+			if ((it = find(key)) == end())
+				return;
+			n = it.base();
 			NodePtr	x;
 			NodePtr	y;
 			NodePtr	w;
+			if (n == _nill)
+				return;
 			if (n->left == _nill || n->right == _nill) {
 				x = (n->left == _nill ? n->right : n->left);
 				if (x != _nill)
