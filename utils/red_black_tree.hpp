@@ -43,6 +43,8 @@ namespace ft {
 		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 
 		void	leftRotate(NodePtr node) {
+			if (node == _nill || node->right == _nill)
+				return;
 			NodePtr tmp = node->right;
 			node->right = tmp->left;
 			if (tmp->left != _nill)
@@ -59,6 +61,8 @@ namespace ft {
 		}
 
 		void	rightRotate(NodePtr node) {
+			if (node == _nill || node->left == _nill)
+				return;
 			NodePtr tmp = node->left;
 			node->left = tmp->right;
 			if (tmp->right != _nill)
@@ -294,11 +298,8 @@ namespace ft {
 		/* --------- */
 
 		void	replaceNode(NodePtr deleted, NodePtr replacement) {
-			if (deleted->parent == _nill) {
+			if (deleted->parent == _nill)
 				_root = replacement;
-				_nill->left = _root;
-				_nill->right = _root;
-			}
 			else
 				(deleted == deleted->parent->left ? deleted->parent->left : deleted->parent->right) = replacement;
 			replacement->parent = deleted->parent;
@@ -306,10 +307,10 @@ namespace ft {
 
 		void	deleteNode(const value_type &key) {
 			NodePtr		n;
-			iterator	it;
-			if ((it = find(key)) == end())
-				return;
+			iterator	it = find(key);
 			n = it.base();
+			if (n == _nill)
+				return ;
 			NodePtr	replacement;
 			NodePtr	x;
 			if (n->left == _nill || n->right == _nill) {
@@ -344,7 +345,6 @@ namespace ft {
 			resetCore();
 			_size--;
 		}
-
 		/* --------- */
 
 		/* LOOKUP */
@@ -455,17 +455,17 @@ namespace ft {
 			if (n == NULL)
 				n = _root;
 			if (n != _nill) {
-				std::cout << BKCOL << prefix << NOCOL;
-				std::cout << BKCOL << (isLeft ? "├──" : "└──" ) << NOCOL;
+				std::cout << prefix;
+				std::cout << (isLeft ? "├──" : "└──" );
 				if (n->color == M_RED)
-					std::cout << RDCOL << n->content << NOCOL << std::endl;
+					std::cout << n->content << std::endl;
 				else
-					std::cout << n->content << NOCOL << std::endl;
+					std::cout << n->content << std::endl;
 				print(prefix + (isLeft ? "│   " : "    "), n->right, true);
 				print(prefix + (isLeft ? "│   " : "    "), n->left, false);
 			}
 			else
-				std::cout << BKCOL << prefix << NOCOL << "nill" << std::endl; 
+				std::cout << prefix << "nill" << std::endl; 
 		}
 
 		Compare			_comp;

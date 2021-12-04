@@ -13,10 +13,15 @@ int	is_bad(ft::set<int> set, std::set<int> original) {
 }
 
 int	main (void) {
+
 	std::list<int> lst;
-	unsigned int lst_size = 1000;
+	unsigned int lst_size = 3;
 	for (unsigned int i = 0; i < lst_size; ++i)
 		lst.push_back(lst_size - i);
+
+	ft::set<int>	a(lst.begin(), lst.end());
+
+	return 0;
 
 	ft::set<int>	m(lst.begin(), lst.end());
 	std::set<int>	n(lst.begin(), lst.end());
@@ -36,6 +41,5 @@ int	main (void) {
 	}
 	if (!m.empty() || !n.empty())
 		return (is_bad(m, n));
-	system("leaks a.out");
 	return (0);
 }

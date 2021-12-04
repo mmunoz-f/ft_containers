@@ -200,7 +200,7 @@ namespace ft {
 			}
 
 			void	push_back(const T &value) { insert(end(), value); }
-			void	pop_back() { erase(end()); }
+			void	pop_back() { erase(--end()); }
 
 			void	resize(size_type count, T value = T()) {
 				if (count > size())
