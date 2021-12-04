@@ -223,7 +223,6 @@ namespace ft {
 		/* DESTRUCTOR */
 
 		~tree() {
-			_alloc.destroy(_nill);
 			_alloc.deallocate(_nill, 1);
 		}
 		/* --------- */
