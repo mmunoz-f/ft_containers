@@ -4,9 +4,17 @@
 
 using namespace std;
 
+int	is_bad(ft::set<int> set, std::set<int> original) {
+	std::cout << "Tienes derecho a llorar" << std::endl;
+	set.print();
+	ft::set<int>	n(original.begin(), original.end());
+	n.print();
+	return (1);
+}
+
 int	main (void) {
 	std::list<int> lst;
-	unsigned int lst_size = 400;
+	unsigned int lst_size = 1000;
 	for (unsigned int i = 0; i < lst_size; ++i)
 		lst.push_back(lst_size - i);
 
@@ -18,21 +26,16 @@ int	main (void) {
 		std::set<int>::const_iterator	ite = n.begin();
 
 		for (;it != m.end() && ite != n.end();it++, ite++) {
-			if (*it != *ite) {
-				std::cout << "caca" << std::endl;
-				return (1);
-			}
+			if (*it != *ite)
+				return (is_bad(m, n));
 		}
-		if (it != m.end() || ite != n.end()) {
-			std::cout << "caca" << std::endl;
-			return (1);
-		}
+		if (it != m.end() || ite != n.end())
+			return (is_bad(m, n));
 		m.erase(m.begin());
 		n.erase(n.begin());
 	}
-	if (!m.empty() || !n.empty()) {
-		std::cout << "caca" << std::endl;
-		return (1);
-	}
+	if (!m.empty() || !n.empty())
+		return (is_bad(m, n));
+	system("leaks a.out");
 	return (0);
 }

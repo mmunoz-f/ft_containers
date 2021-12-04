@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 17:58:46 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/12/03 21:48:58 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/04 18:08:01 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,36 +42,36 @@ namespace ft {
 		typedef ft::reverse_iterator<iterator>						reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 
-		void	leftRotate(NodePtr x) {
-			NodePtr y = x->right;
-			x->right = y->left;
-			if (y->left != _nill)
-				y->left->parent = x;
-			y->parent = x->parent;
-			if (x->parent == _nill)
-				_root = y;
-			else if (x == x->parent->left)
-				x->parent->left = y;
+		void	leftRotate(NodePtr node) {
+			NodePtr tmp = node->right;
+			node->right = tmp->left;
+			if (tmp->left != _nill)
+				tmp->left->parent = node;
+			tmp->parent = node->parent;
+			if (node->parent == _nill)
+				_root = tmp;
+			else if (node == node->parent->left)
+				node->parent->left = tmp;
 			else
-				x->parent->right = y;
-			x->parent = y;
-			y->left = x;
+				node->parent->right = tmp;
+			node->parent = tmp;
+			tmp->left = node;
 		}
 
-		void	rightRotate(NodePtr y) {
-			NodePtr x = y->left;
-			y->left = x->right;
-			if (x->right != _nill)
-				x->right->parent = y;
-			x->parent = y->parent;
-			if (y->parent == _nill)
-				_root = x;
-			else if (y == y->parent->right)
-				y->parent->right = x;
+		void	rightRotate(NodePtr node) {
+			NodePtr tmp = node->left;
+			node->left = tmp->right;
+			if (tmp->right != _nill)
+				tmp->right->parent = node;
+			tmp->parent = node->parent;
+			if (node->parent == _nill)
+				_root = tmp;
+			else if (node == node->parent->right)
+				node->parent->right = tmp;
 			else
-				y->parent->left = x;
-			y->parent = x;
-			x->right = y;
+				node->parent->left = tmp;
+			node->parent = tmp;
+			tmp->right = node;
 		}
 
 		static void	reColorInsert(NodePtr n) {
@@ -293,56 +293,52 @@ namespace ft {
 		}
 		/* --------- */
 
+		void	replaceNode(NodePtr deleted, NodePtr replacement) {
+			if (deleted->parent == _nill) {
+				_root = replacement;
+				_nill->left = _root;
+				_nill->right = _root;
+			}
+			else
+				(deleted == deleted->parent->left ? deleted->parent->left : deleted->parent->right) = replacement;
+			replacement->parent = deleted->parent;
+		}
+
 		void	deleteNode(const value_type &key) {
 			NodePtr		n;
 			iterator	it;
 			if ((it = find(key)) == end())
 				return;
 			n = it.base();
+			NodePtr	replacement;
 			NodePtr	x;
-			NodePtr	y;
-			NodePtr	w;
-			if (n == _nill)
-				return;
 			if (n->left == _nill || n->right == _nill) {
-				x = (n->left == _nill ? n->right : n->left);
-				if (x != _nill)
-					x->parent = n->parent;
-				y = x;
-				w = _nill;
+				x = replacement = (n->left == _nill ? n->right : n->left);
+				replaceNode(n, replacement);	
 			}
 			else {
-				x = n->getSuccesor(_nill);
-				y = x->right;
-				w = x->left;
-				if (y != _nill)
-					y->parent = x->parent;
-				if (x == x->parent->left) {
-					x->parent->left = y;
-					w = x->parent->right;
-				}
+				replacement = n->getSuccesor(_nill);
+				x = replacement->right;
+				if (replacement->parent == n)
+					x->parent = replacement;
 				else {
-					x->parent->right = y;
-					w = x->parent->left;
+					replaceNode(replacement, x);
+					replacement->right = n->right;
+					replacement->right->parent = replacement;
 				}
-				x->parent = n->parent;
-				x->left = n->left;
-				x->left->parent = x;
-				x->right = n->right;
-				x->right->parent = x;
+				replaceNode(n, replacement);
+				replacement->left = n->left;
+				replacement->left->parent = replacement;;
 			}
-			n == n->parent->left ? n->parent->left = x : n->parent->right = x;
-			if (n == _root)
-				_root = x;
-			if (n->color == M_RED && (x == _nill || x->color == M_RED));
-			else if (n->color == M_RED && x->color == M_BLACK) {
-				x->color = M_RED;
-				while (fixDelete(y, w));
+			if (n->color == M_RED && (replacement == _nill || replacement->color == M_RED));
+			else if (n->color == M_RED && replacement->color == M_BLACK) {
+				replacement->color = M_RED;
+				while (fixDelete(x, x->getSibling()));
 			}
-			else if (n->color == M_BLACK && x->color == M_RED)
-				x->color = M_BLACK;
-			else if (n->color == M_BLACK && (x == _nill || x->color == M_BLACK))
-				while (fixDelete(y, w));
+			else if (n->color == M_BLACK && replacement->color == M_RED)
+				replacement->color = M_BLACK;
+			else if (n->color == M_BLACK && (replacement == _nill || replacement->color == M_BLACK))
+				while (fixDelete(x, x->getSibling()));
 			_alloc.destroy(n);
 			_alloc.deallocate(n, 1);
 			resetCore();
