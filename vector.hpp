@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 17:29:07 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/11/16 16:49:40 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/06 19:39:40 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ namespace ft {
 
 			iterator	insert(iterator pos, const T &value) {
 				if (_end == _end_cap.first) {
-					difference_type	pos_val = pos.base() - _begin;
+					difference_type	pos_val = ft::distance(begin(), pos);
 					reserve((size() + 1) * 2);
 					pos = begin() + pos_val;
 				}

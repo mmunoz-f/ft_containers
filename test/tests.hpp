@@ -6,12 +6,16 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 02:53:37 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/05 17:55:36 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/06 16:40:13 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __TEST_H__
 # define __TEST_H__
+
+# ifndef M_LEAKS
+#  define M_LEAKS false
+# endif
 
 # define RESET		"\033[0m"
 # define BLACK		"\033[30m"
@@ -23,6 +27,9 @@
 # define CYAN		"\033[36m"
 # define WHITE		"\033[37m"
 # define BOLDBLACK	"\033[1m\033[30m"
+
+# include "../utils/reverse_iterator.hpp"
+# include "../utils/utils.hpp"
 
 class	Simple {
 	public:

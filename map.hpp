@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 16:59:50 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/12/03 20:40:39 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/06 17:55:11 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,8 +227,6 @@ namespace ft {
 
 			value_compare	value_comp() const { return (value_compare(Compare())); }
 			/* --------- */
-
-			void	print() const { _tree.print(); } // TODO
 
 		private:
 			Tree	_tree;

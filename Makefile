@@ -6,12 +6,13 @@
 #    By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/30 18:50:48 by mmunoz-f          #+#    #+#              #
-#    Updated: 2021/10/07 21:34:02 by mmunoz-f         ###   ########.fr        #
+#    Updated: 2021/12/06 19:43:43 by mmunoz-f         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = clang++
-CXXFLAGS = -Wall -Werror -Wextra -g -fsanitize=address
+CXXFLAGS = -Wall -Werror -Wextra -fsanitize=address -g3
+LEAKS = -D M_LEAKS=1 
 
 M =
 
@@ -20,36 +21,44 @@ NAME =
 SRCS =
 OBJS = $(SRCS:.cpp=.o)
 
-PRUEBA_SRCS = test/pruebas.cpp
-PRUEBA_OBJS = $(PRUEBA_SRCS:.cpp=.o)
-
-TEST_SRCS = test/utils_tester.cpp test/vector_test.cpp test/ft_vector_test.cpp
+TEST_SRCS = test/utils_tester.cpp test/std_vector_test.cpp test/ft_vector_test.cpp test/std_map_test.cpp test/ft_map_test.cpp
 TEST_OBJS = $(TEST_SRCS:.cpp=.o)
 
-all: $(NAME)
+all: utils v m
 
-$(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJS)
-
-prueba: $(PRUEBA_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $(PRUEBA_OBJS)
-	./$@
-
-tester: test/pruebas.o
+utils: test/utils_tester.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 	./$@
 
-v: fclean test/vector_test.o test/ft_vector_test.o
-	$(CXX) $(CXXFLAGS) -o vector_test test/vector_test.o
-	./vector_test
+v: fclean test/std_vector_test.o test/ft_vector_test.o
+	$(CXX) $(CXXFLAGS) -o std_vector_test test/std_vector_test.o
 	$(CXX) $(CXXFLAGS) -o ft_vector_test test/ft_vector_test.o
+	./ft_vector_test > uno
+	./std_vector_test > dos
+	diff uno dos
+	rm uno dos
+
+m: fclean test/std_map_test.o test/ft_map_test.o
+	$(CXX) $(CXXFLAGS) -o std_map_test test/std_map_test.o
+	$(CXX) $(CXXFLAGS) -o ft_map_test test/ft_map_test.o
+	./ft_map_test > uno
+	./std_map_test > dos
+	diff uno dos
+	rm uno dos
+
+v_leaks: fclean
+	$(CXX) $(CXXFLAGS) $(LEAKS) -o ft_vector_test test/ft_vector_test.cpp
 	./ft_vector_test
+
+m_leaks: fclean
+	$(CXX) $(CXXFLAGS) $(LEAKS) -o ft_map_test test/ft_map_test.cpp
+	./ft_map_test
 
 clean:
 	rm -f $(OBJS) $(PRUEBA_OBJS) $(TEST_OBJS)
 
 fclean: clean
-	rm -f $(NAME) prueba tester vector_test ft_vector_test
+	rm -f $(NAME) tester std_vector_test ft_vector_test std_map_test ft_map_test
 
 re: fclean all
 

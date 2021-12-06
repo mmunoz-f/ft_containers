@@ -6,7 +6,7 @@
 /*   By: mmunoz-f <mmunoz-f@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/02 01:22:04 by mmunoz-f          #+#    #+#             */
-/*   Updated: 2021/10/05 18:07:36 by mmunoz-f         ###   ########.fr       */
+/*   Updated: 2021/12/06 16:00:43 by mmunoz-f         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,9 @@ int	main(void) {
 		struct ft::pair<int, std::string>	b(2, std::string("mundo"));
 		struct ft::pair<int, std::string>	c(b);
 
-		//std::cout << a.first << ": " << a.second << std::endl;
-		//std::cout << b.first << ": " << b.second << std::endl;
-		//std::cout << c.first << ": " << c.second << std::endl;
+		std::cout << a.first << ": " << a.second << std::endl;
+		std::cout << b.first << ": " << b.second << std::endl;
+		std::cout << c.first << ": " << c.second << std::endl;
 
 		c == b ? (std::cout << GREEN << "[OK] ") : (std::cout << RED << "[KO] ");
 		c != b ? (std::cout << RED << "[KO] ") : (std::cout << GREEN << "[OK] ");
