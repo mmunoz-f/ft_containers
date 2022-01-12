@@ -1,6 +1,6 @@
 # ft_containers
 
-The containers of the STL (standard template library) let us work with data structure and functions, such as vectors, maps, lists… etc. These containers are really useful and you will find them in many other projects not only in C/C++ but also in many JS or python code.
+The containers of the STL (standard template library) let us work with data structure and functions, such as vectors, maps, lists… etc. These containers are really useful and you will find them in many other projects, not only in C/C++ but also in many JS or python code.
 
 Here I reimplemented the basics of four of them:
 
